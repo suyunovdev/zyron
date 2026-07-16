@@ -1,15 +1,15 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-primary: #0F172A;
-  --color-secondary: #2563EB;
-  --color-accent: #06B6D4;
+  --color-primary: #0A0F1E;
+  --color-secondary: #6366F1;
+  --color-accent: #22D3EE;
   --color-gray-custom: #94A3B8;
-  --color-dark: #020617;
-  --color-card: #0F172A;
-  --color-card-hover: #1E293B;
-  --color-border: #1E293B;
-  --color-border-hover: #334155;
+  --color-dark: #050816;
+  --color-card: #111827;
+  --color-card-hover: #1F2937;
+  --color-border: rgba(99, 102, 241, 0.12);
+  --color-border-hover: rgba(99, 102, 241, 0.25);
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
@@ -22,88 +22,111 @@ html {
 }
 
 body {
-  background: #020617;
-  color: #F8FAFC;
+  background: #050816;
+  color: #F1F5F9;
 }
 
+/* Glass effects */
 .glass {
-  background: rgba(15, 23, 42, 0.6);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(30, 41, 59, 0.5);
+  background: rgba(17, 24, 39, 0.7);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(99, 102, 241, 0.1);
 }
 
 .glass-light {
-  background: rgba(15, 23, 42, 0.3);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(30, 41, 59, 0.3);
+  background: rgba(17, 24, 39, 0.4);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(99, 102, 241, 0.08);
 }
 
+/* Text gradients */
 .gradient-text {
-  background: linear-gradient(135deg, #FFFFFF 0%, #94A3B8 100%);
+  background: linear-gradient(135deg, #FFFFFF 0%, #E2E8F0 50%, #94A3B8 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
 .gradient-text-blue {
-  background: linear-gradient(135deg, #2563EB 0%, #06B6D4 100%);
+  background: linear-gradient(135deg, #818CF8 0%, #6366F1 30%, #22D3EE 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
+/* Background animation */
 .animated-gradient {
-  background: linear-gradient(-45deg, #020617, #0F172A, #1E293B, #0F172A);
+  background: linear-gradient(-45deg, #050816, #0A0F1E, #111827, #0F172A, #050816);
   background-size: 400% 400%;
-  animation: gradient-shift 15s ease infinite;
+  animation: gradient-shift 20s ease infinite;
 }
 
 @keyframes gradient-shift {
   0% { background-position: 0% 50%; }
+  25% { background-position: 50% 100%; }
   50% { background-position: 100% 50%; }
+  75% { background-position: 50% 0%; }
   100% { background-position: 0% 50%; }
 }
 
+/* Glows */
 .glow-blue {
-  box-shadow: 0 0 40px rgba(37, 99, 235, 0.15);
+  box-shadow: 0 0 60px rgba(99, 102, 241, 0.12), 0 0 120px rgba(99, 102, 241, 0.06);
 }
 
 .glow-cyan {
-  box-shadow: 0 0 40px rgba(6, 182, 212, 0.15);
+  box-shadow: 0 0 60px rgba(34, 211, 238, 0.12), 0 0 120px rgba(34, 211, 238, 0.06);
 }
 
+/* Patterns */
 .grid-pattern {
   background-image:
-    linear-gradient(rgba(30, 41, 59, 0.3) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(30, 41, 59, 0.3) 1px, transparent 1px);
+    linear-gradient(rgba(99, 102, 241, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(99, 102, 241, 0.06) 1px, transparent 1px);
   background-size: 60px 60px;
 }
 
 .dot-pattern {
-  background-image: radial-gradient(rgba(148, 163, 184, 0.15) 1px, transparent 1px);
+  background-image: radial-gradient(rgba(99, 102, 241, 0.12) 1px, transparent 1px);
   background-size: 24px 24px;
 }
 
+/* Section alternate backgrounds */
+section:nth-child(even) {
+  background: rgba(17, 24, 39, 0.3);
+}
+
+/* Card hover effects */
+.card-hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px rgba(99, 102, 241, 0.08), 0 0 0 1px rgba(99, 102, 241, 0.15);
+}
+
+/* Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #020617;
+  background: #050816;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #1E293B;
+  background: rgba(99, 102, 241, 0.3);
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #334155;
+  background: rgba(99, 102, 241, 0.5);
 }
 
 ::selection {
-  background: rgba(37, 99, 235, 0.3);
-  color: #F8FAFC;
+  background: rgba(99, 102, 241, 0.3);
+  color: #F1F5F9;
 }

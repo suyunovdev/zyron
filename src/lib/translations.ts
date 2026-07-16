@@ -18,8 +18,8 @@ export const translations = {
       uz: "Tanishtiring: ZYRON — biznes texnologiyalar ekotizimi",
       ru: "Представляем ZYRON — экосистему бизнес-технологий",
     },
-    title1: { en: "Beyond", uz: "Innovatsiyadan", ru: "За пределами" },
-    title2: { en: "Innovation.", uz: "Narida.", ru: "Инноваций." },
+    title1: { en: "Beyond", uz: "Kelajak", ru: "Технологии" },
+    title2: { en: "Innovation.", uz: "Texnologiyasi.", ru: "Будущего." },
     desc: {
       en: "Build smarter businesses with innovative technology solutions. Automate, manage, and grow with the power of AI and cloud.",
       uz: "Innovatsion texnologik yechimlar yordamida zamonaviy biznes quring. Sun'iy intellekt va bulut texnologiyalari bilan avtomatlashtiring, boshqaring va rivojlaning.",

@@ -6,8 +6,6 @@ import { useLanguage } from "@/lib/LanguageContext";
 import { translations, t } from "@/lib/translations";
 import { ZyronMark } from "./ZyronLogo";
 
-// Hamkor logotiplari uchun slot — haqiqiy logotiplar bilan almashtiring
-// Har bir element: { name: string, logo?: React.ReactNode | string (URL) }
 const partnerSlots = [
   { name: "TechCorp", logo: null },
   { name: "InnovateCo", logo: null },
@@ -23,29 +21,33 @@ export default function Hero() {
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       <div className="absolute inset-0 animated-gradient" />
-      <div className="absolute inset-0 grid-pattern opacity-40" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-secondary/10 rounded-full blur-[120px]" />
-      <div className="absolute top-1/3 right-1/4 w-[400px] h-[400px] bg-accent/8 rounded-full blur-[100px]" />
+      <div className="absolute inset-0 grid-pattern opacity-30" />
 
+      {/* Glowing orbs */}
+      <div className="absolute top-1/4 left-1/3 w-[600px] h-[600px] bg-secondary/8 rounded-full blur-[150px] animate-pulse" />
+      <div className="absolute bottom-1/4 right-1/3 w-[500px] h-[500px] bg-accent/6 rounded-full blur-[130px]" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] bg-purple-500/5 rounded-full blur-[100px]" />
+
+      {/* Floating elements */}
       <motion.div
-        animate={{ y: [-20, 20, -20] }}
+        animate={{ y: [-20, 20, -20], rotate: [0, 5, 0] }}
         transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute top-32 left-[15%] w-16 h-16 rounded-2xl glass-light opacity-40 hidden lg:block"
+        className="absolute top-32 left-[15%] w-16 h-16 rounded-2xl bg-secondary/5 border border-secondary/10 hidden lg:block"
       />
       <motion.div
-        animate={{ y: [15, -15, 15] }}
+        animate={{ y: [15, -15, 15], rotate: [0, -5, 0] }}
         transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute top-48 right-[20%] w-12 h-12 rounded-xl bg-secondary/10 border border-secondary/20 hidden lg:block"
+        className="absolute top-48 right-[20%] w-12 h-12 rounded-xl bg-accent/5 border border-accent/10 hidden lg:block"
       />
       <motion.div
         animate={{ y: [-10, 25, -10] }}
         transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute bottom-40 left-[25%] w-20 h-20 rounded-2xl glass-light opacity-30 hidden lg:block"
+        className="absolute bottom-40 left-[25%] w-20 h-20 rounded-2xl bg-secondary/5 border border-secondary/10 hidden lg:block"
       />
       <motion.div
         animate={{ y: [20, -20, 20] }}
         transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute bottom-32 right-[15%] w-14 h-14 rounded-full bg-accent/10 border border-accent/20 hidden lg:block"
+        className="absolute bottom-32 right-[15%] w-14 h-14 rounded-full bg-accent/5 border border-accent/10 hidden lg:block"
       />
 
       <div className="relative z-10 max-w-5xl mx-auto px-6 text-center">
@@ -53,10 +55,10 @@ export default function Hero() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-light mb-8"
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-secondary/10 border border-secondary/20 mb-8"
         >
-          <div className="w-2 h-2 rounded-full bg-accent animate-pulse" />
-          <span className="text-sm text-gray-400">{t(tr.badge, locale)}</span>
+          <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+          <span className="text-sm text-gray-300">{t(tr.badge, locale)}</span>
         </motion.div>
 
         <motion.div
@@ -96,32 +98,32 @@ export default function Hero() {
         >
           <a
             href="#contact"
-            className="group flex items-center gap-2 bg-white text-primary font-semibold px-8 py-3.5 rounded-xl hover:bg-gray-100 transition-all duration-200 shadow-lg shadow-white/10"
+            className="group flex items-center gap-2 bg-gradient-to-r from-secondary to-secondary/90 text-white font-semibold px-8 py-3.5 rounded-xl hover:shadow-lg hover:shadow-secondary/25 transition-all duration-300"
           >
             {t(tr.cta1, locale)}
             <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
           </a>
           <a
             href="#products"
-            className="group flex items-center gap-2 glass-light text-gray-300 font-medium px-8 py-3.5 rounded-xl hover:text-white transition-all duration-200"
+            className="group flex items-center gap-2 bg-white/5 border border-white/10 text-gray-300 font-medium px-8 py-3.5 rounded-xl hover:bg-white/10 hover:text-white hover:border-white/20 transition-all duration-300"
           >
             <Play size={16} />
             {t(tr.cta2, locale)}
           </a>
           <a
             href="#contact"
-            className="text-gray-400 hover:text-white font-medium px-6 py-3.5 transition-colors"
+            className="text-gray-400 hover:text-accent font-medium px-6 py-3.5 transition-colors"
           >
             {t(tr.cta3, locale)}
           </a>
         </motion.div>
 
-        {/* Trusted by — hamkor logotiplari sloti */}
+        {/* Trusted by */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.7, delay: 0.6 }}
-          className="mt-20 pt-10 border-t border-border"
+          className="mt-20 pt-10 border-t border-white/5"
         >
           <p className="text-xs text-gray-500 uppercase tracking-widest mb-6">
             {t(tr.trusted, locale)}
@@ -130,10 +132,8 @@ export default function Hero() {
             {partnerSlots.map((partner) => (
               <div key={partner.name} className="flex items-center justify-center">
                 {partner.logo ? (
-                  // Haqiqiy logotip uchun slot
                   <>{partner.logo}</>
                 ) : (
-                  // Placeholder — haqiqiy logotip bilan almashtiring
                   <span className="text-sm sm:text-base font-semibold text-gray-500 tracking-wide">
                     {partner.name}
                   </span>

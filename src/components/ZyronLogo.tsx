@@ -11,8 +11,8 @@ export function ZyronMark({ size = 32, className = "" }: { size?: number; classN
     >
       <defs>
         <linearGradient id="zyron-gz" gradientUnits="userSpaceOnUse" x1="14" y1="10" x2="86" y2="90">
-          <stop offset="0" stopColor="#2563EB" />
-          <stop offset="1" stopColor="#06B6D4" />
+          <stop offset="0" stopColor="#818CF8" />
+          <stop offset="1" stopColor="#22D3EE" />
         </linearGradient>
       </defs>
       <path

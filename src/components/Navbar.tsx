@@ -111,7 +111,7 @@ export default function Navbar() {
             href="https://t.me/zyrontech"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sm bg-white text-primary font-medium px-5 py-2.5 rounded-lg hover:bg-gray-200 transition-colors"
+            className="text-sm bg-gradient-to-r from-secondary to-secondary/90 text-white font-medium px-5 py-2.5 rounded-lg hover:shadow-lg hover:shadow-secondary/25 transition-all duration-300"
           >
             {t(tr.contactUs, locale)}
           </a>
