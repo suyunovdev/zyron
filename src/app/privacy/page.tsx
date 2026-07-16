@@ -3,8 +3,9 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Maxfiylik siyosati — ZYRON",
+  title: "Maxfiylik siyosati",
   description: "ZYRON maxfiylik siyosati. Shaxsiy ma'lumotlaringiz qanday yig'ilishi, ishlatilishi va himoya qilinishi haqida.",
+  alternates: { canonical: "https://zyron.uz/privacy" },
 };
 
 export default function PrivacyPage() {

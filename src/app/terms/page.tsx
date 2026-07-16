@@ -3,8 +3,9 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Foydalanish shartlari — ZYRON",
+  title: "Foydalanish shartlari",
   description: "ZYRON platformasi foydalanish shartlari va qoidalari.",
+  alternates: { canonical: "https://zyron.uz/terms" },
 };
 
 export default function TermsPage() {

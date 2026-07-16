@@ -3,8 +3,15 @@ import Link from "next/link";
 import { ArrowLeft, MapPin, Clock, Zap, Heart, Coffee, Laptop, GraduationCap, Globe } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Karyera — ZYRON",
-  description: "ZYRON jamoasiga qo'shiling. Biznes texnologiya kelajagini birga quramiz.",
+  title: "Karyera",
+  description: "ZYRON jamoasiga qo'shiling. Full-Stack Developer, UI/UX Designer, DevOps, AI/ML Engineer — ochiq pozitsiyalar. Biznes texnologiya kelajagini birga quramiz.",
+  alternates: { canonical: "https://zyron.uz/careers" },
+  openGraph: {
+    title: "Karyera — ZYRON",
+    description: "ZYRON jamoasiga qo'shiling. Ochiq pozitsiyalar va imkoniyatlar.",
+    url: "https://zyron.uz/careers",
+    type: "website",
+  },
 };
 
 const positions = [

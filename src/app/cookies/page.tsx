@@ -3,8 +3,9 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Cookie siyosati — ZYRON",
+  title: "Cookie siyosati",
   description: "ZYRON veb-saytida cookie fayllaridan qanday foydalanilishi haqida.",
+  alternates: { canonical: "https://zyron.uz/cookies" },
 };
 
 export default function CookiePage() {

@@ -3,8 +3,15 @@ import Link from "next/link";
 import { ArrowLeft, Clock, ArrowRight } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Blog — ZYRON",
-  description: "ZYRON blog — biznes texnologiyalar, SaaS, AI va startup yangiliklari.",
+  title: "Blog",
+  description: "ZYRON blog — biznes texnologiyalar, SaaS, AI va startup yangiliklari. O'zbekiston IT bozori haqida eng so'nggi maqolalar.",
+  alternates: { canonical: "https://zyron.uz/blog" },
+  openGraph: {
+    title: "Blog — ZYRON",
+    description: "Biznes texnologiyalar, SaaS, AI va startup yangiliklari.",
+    url: "https://zyron.uz/blog",
+    type: "website",
+  },
 };
 
 const posts = [

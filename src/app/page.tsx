@@ -16,17 +16,19 @@ export default function Home() {
   return (
     <>
       <Navbar />
-      <Hero />
-      <About />
-      <Products />
-      <Features />
-      <Industries />
-      <WhyZyron />
-      <TechStack />
-      <Stats />
-      <Testimonials />
-      <FAQ />
-      <Contact />
+      <main>
+        <Hero />
+        <About />
+        <Products />
+        <Features />
+        <Industries />
+        <WhyZyron />
+        <TechStack />
+        <Stats />
+        <Testimonials />
+        <FAQ />
+        <Contact />
+      </main>
       <Footer />
     </>
   );
