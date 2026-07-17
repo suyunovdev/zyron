@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   TrendingUp, TrendingDown, Eye, ShoppingCart, Users, DollarSign,
   ArrowUpRight, BarChart3, PieChart, Activity, Download, Filter,
@@ -79,9 +79,52 @@ const geoData = [
   { city: "Boshqa", orders: 248, revenue: "102.3M", percent: 11 },
 ];
 
+function applyVariance(base: number): number {
+  const delta = (Math.random() - 0.5) * 0.1 * base; // ±5%
+  return Math.round(Math.max(1, Math.min(100, base + delta)));
+}
+
 export default function AnalyticsDemo() {
   const [tab, setTab] = useState<Tab>("overview");
   const [metric, setMetric] = useState<"revenue" | "orders" | "visitors">("revenue");
+  const [clock, setClock] = useState(() => new Date().toLocaleTimeString("uz-UZ"));
+  const [toast, setToast] = useState<string | null>(null);
+  const [lastUpdated, setLastUpdated] = useState(0);
+  const [liveWeekly, setLiveWeekly] = useState(weeklyData);
+  const [liveRealtime, setLiveRealtime] = useState(realtimeData);
+  const [hoveredBar, setHoveredBar] = useState<number | null>(null);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  useEffect(() => {
+    const clockTimer = setInterval(() => setClock(new Date().toLocaleTimeString("uz-UZ")), 1000);
+    return () => clearInterval(clockTimer);
+  }, []);
+
+  useEffect(() => {
+    intervalRef.current = setInterval(() => {
+      setLiveWeekly((prev) =>
+        prev.map((d) => ({ ...d, revenue: applyVariance(d.revenue), orders: applyVariance(d.orders), visitors: applyVariance(d.visitors) }))
+      );
+      setLiveRealtime((prev) =>
+        prev.map((rt, i) => {
+          const bases = [342, 289, 284, 127];
+          const newVal = Math.round(bases[i] * (0.95 + Math.random() * 0.1));
+          return { ...rt, value: i === 2 ? `${(newVal * 0.1).toFixed(1)}M` : newVal.toString() };
+        })
+      );
+      setLastUpdated(0);
+    }, 3000);
+    const countTimer = setInterval(() => setLastUpdated((s) => s + 1), 1000);
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+      clearInterval(countTimer);
+    };
+  }, []);
+
+  const showToast = (msg: string) => {
+    setToast(msg);
+    setTimeout(() => setToast(null), 2500);
+  };
 
   const metricColors = {
     revenue: { bar: "bg-emerald-500", line: "text-emerald-400", label: "Daromad" },
@@ -100,6 +143,29 @@ export default function AnalyticsDemo() {
 
   return (
     <div className="flex flex-col gap-3 min-h-[420px]">
+      {/* Toast */}
+      {toast && (
+        <div className="fixed top-4 right-4 z-50 px-4 py-2 rounded-lg bg-amber-500/90 text-white text-[11px] font-medium shadow-lg">
+          {toast}
+        </div>
+      )}
+
+      {/* Status Bar */}
+      <div className="flex items-center justify-between px-3 py-1.5 rounded-lg bg-white/[0.03] border border-white/[0.06]">
+        <div className="flex items-center gap-2">
+          <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+          <span className="text-[10px] font-semibold text-amber-400">ZYRON Analytics v2.0</span>
+          <span className="text-[9px] text-gray-600">•</span>
+          <Activity size={9} className="text-emerald-400" />
+          <span className="text-[9px] text-emerald-400">Real-time</span>
+          <span className="text-[9px] text-gray-600">•</span>
+          <span className="text-[9px] text-gray-500">
+            Oxirgi yangilanish: {lastUpdated === 0 ? "hozir" : `${lastUpdated} soniya oldin`}
+          </span>
+        </div>
+        <span className="text-[9px] text-gray-600 font-mono">{clock}</span>
+      </div>
+
       {/* KPI Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
         {kpis.map((kpi) => (
@@ -157,16 +223,26 @@ export default function AnalyticsDemo() {
                   ))}
                 </div>
               </div>
-              <div className="flex items-end gap-2 h-[100px]">
-                {weeklyData.map((d, i) => {
+              <div className="flex items-end gap-2 h-[100px] relative">
+                {hoveredBar !== null && (
+                  <div
+                    className="absolute -top-6 pointer-events-none z-10 px-2 py-0.5 rounded bg-white/10 border border-white/10 text-[8px] text-white font-medium"
+                    style={{ left: `${(hoveredBar / liveWeekly.length) * 100}%` }}
+                  >
+                    {liveWeekly[hoveredBar]?.[metric]}%
+                  </div>
+                )}
+                {liveWeekly.map((d, i) => {
                   const val = d[metric];
                   return (
-                    <div key={d.day} className="flex-1 flex flex-col items-center gap-1 group/bar">
-                      <span className="text-[8px] text-gray-500 opacity-0 group-hover/bar:opacity-100 transition-opacity">
-                        {val}%
-                      </span>
+                    <div
+                      key={d.day}
+                      className="flex-1 flex flex-col items-center gap-1"
+                      onMouseEnter={() => setHoveredBar(i)}
+                      onMouseLeave={() => setHoveredBar(null)}
+                    >
                       <div
-                        className={`w-full rounded-t-md ${metricColors[metric].bar} transition-all duration-500 hover:opacity-80 ${
+                        className={`w-full rounded-t-md ${metricColors[metric].bar} transition-all duration-700 hover:opacity-80 ${
                           i === 5 ? "opacity-100" : "opacity-50"
                         }`}
                         style={{ height: `${val}%` }}
@@ -337,16 +413,22 @@ export default function AnalyticsDemo() {
         <div className="flex-1 space-y-3">
           {/* Real-time KPIs */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-            {realtimeData.map((rt) => (
-              <div key={rt.metric} className="p-2.5 rounded-lg bg-white/[0.03] border border-white/[0.06]">
+            {liveRealtime.map((rt) => (
+              <div key={rt.metric} className="p-2.5 rounded-lg bg-white/[0.03] border border-white/[0.06] border-l-2 border-l-emerald-500/40">
                 <rt.icon size={12} className={`${rt.color} mb-1`} />
-                <p className="text-[13px] font-bold text-white">{rt.value}</p>
+                <p className="text-[13px] font-bold text-white transition-all duration-500">{rt.value}</p>
                 <div className="flex items-center justify-between">
                   <p className="text-[8px] text-gray-500">{rt.metric}</p>
                   <span className="text-[8px] text-emerald-400 font-medium">{rt.change}</span>
                 </div>
               </div>
             ))}
+          </div>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              <span className="text-[9px] text-emerald-400">Live • Oxirgi yangilanish: {lastUpdated === 0 ? "hozir" : `${lastUpdated}s oldin`}</span>
+            </div>
           </div>
 
           {/* Live Traffic Chart */}
@@ -407,7 +489,10 @@ export default function AnalyticsDemo() {
           <div className="bg-white/[0.02] rounded-xl border border-white/[0.06] p-3">
             <div className="flex items-center justify-between mb-2">
               <p className="text-[11px] font-bold text-white">Top mahsulotlar</p>
-              <button className="flex items-center gap-1 text-[9px] text-gray-500 hover:text-white">
+              <button
+                onClick={() => showToast("Hisobot yuklab olindi!")}
+                className="flex items-center gap-1 text-[9px] text-gray-500 hover:text-amber-400 transition-colors"
+              >
                 <Download size={10} />
                 Export
               </button>

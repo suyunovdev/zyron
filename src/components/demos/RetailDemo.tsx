@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Search, Package, AlertTriangle, TrendingUp, TrendingDown,
-  ArrowUpDown, Filter, Truck, BarChart3, Plus, Minus, Eye,
+  ArrowUpDown, Truck, BarChart3, Plus, Minus, Eye, Store,
 } from "lucide-react";
 
 type Tab = "inventory" | "suppliers" | "movements" | "report";
@@ -71,6 +71,8 @@ function fmt(n: number) {
   return n.toLocaleString("uz-UZ");
 }
 
+const stores = ["Toshkent Markaziy", "Yunusobod filial", "Chilonzor filial"];
+
 export default function RetailDemo() {
   const [tab, setTab] = useState<Tab>("inventory");
   const [search, setSearch] = useState("");
@@ -78,6 +80,31 @@ export default function RetailDemo() {
   const [sortKey, setSortKey] = useState<SortKey>("name");
   const [sortAsc, setSortAsc] = useState(true);
   const [selectedProduct, setSelectedProduct] = useState<number | null>(null);
+  const [clock, setClock] = useState(() => new Date().toLocaleTimeString("uz-UZ"));
+  const [toast, setToast] = useState<string | null>(null);
+  const [selectedStore, setSelectedStore] = useState(stores[0]);
+  const [stockData, setStockData] = useState(inventory.map((p) => ({ id: p.id, stock: p.stock, sold: p.sold })));
+
+  useEffect(() => {
+    const t = setInterval(() => setClock(new Date().toLocaleTimeString("uz-UZ")), 1000);
+    return () => clearInterval(t);
+  }, []);
+
+  const showToast = (msg: string) => {
+    setToast(msg);
+    setTimeout(() => setToast(null), 2500);
+  };
+
+  const sellProduct = (id: number) => {
+    setStockData((prev) =>
+      prev.map((p) => p.id === id && p.stock > 0 ? { ...p, stock: p.stock - 1, sold: p.sold + 1 } : p)
+    );
+    const product = inventory.find((p) => p.id === id);
+    showToast(`Muvaffaqiyatli! ${product?.name} sotildi`);
+  };
+
+  const getStock = (id: number) => stockData.find((p) => p.id === id)?.stock ?? 0;
+  const getSold = (id: number) => stockData.find((p) => p.id === id)?.sold ?? 0;
 
   const filtered = inventory
     .filter(
@@ -89,6 +116,8 @@ export default function RetailDemo() {
     .sort((a, b) => {
       const m = sortAsc ? 1 : -1;
       if (sortKey === "name") return a.name.localeCompare(b.name) * m;
+      if (sortKey === "stock") return (getStock(a.id) - getStock(b.id)) * m;
+      if (sortKey === "sold") return (getSold(a.id) - getSold(b.id)) * m;
       return ((a[sortKey] as number) - (b[sortKey] as number)) * m;
     });
 
@@ -97,11 +126,11 @@ export default function RetailDemo() {
     else { setSortKey(key); setSortAsc(true); }
   };
 
-  const totalItems = inventory.reduce((s, p) => s + p.stock, 0);
-  const lowStock = inventory.filter((p) => p.stock > 0 && p.stock <= p.minStock).length;
-  const outOfStock = inventory.filter((p) => p.stock === 0).length;
-  const totalValue = inventory.reduce((s, p) => s + p.stock * p.price, 0);
-  const totalProfit = inventory.reduce((s, p) => s + p.sold * (p.price - p.cost), 0);
+  const totalItems = stockData.reduce((s, p) => s + p.stock, 0);
+  const lowStock = inventory.filter((p) => { const s = getStock(p.id); return s > 0 && s <= p.minStock; }).length;
+  const outOfStock = inventory.filter((p) => getStock(p.id) === 0).length;
+  const totalValue = inventory.reduce((s, p) => s + getStock(p.id) * p.price, 0);
+  const totalProfit = inventory.reduce((s, p) => s + getSold(p.id) * (p.price - p.cost), 0);
 
   const tabs: { key: Tab; label: string; icon: typeof Package }[] = [
     { key: "inventory", label: "Ombor", icon: Package },
@@ -114,6 +143,31 @@ export default function RetailDemo() {
 
   return (
     <div className="flex flex-col gap-3 min-h-[420px]">
+      {/* Toast */}
+      {toast && (
+        <div className="fixed top-4 right-4 z-50 px-4 py-2 rounded-lg bg-emerald-500/90 text-white text-[11px] font-medium shadow-lg animate-fade-in">
+          {toast}
+        </div>
+      )}
+
+      {/* Status Bar */}
+      <div className="flex items-center justify-between px-3 py-1.5 rounded-lg bg-white/[0.03] border border-white/[0.06]">
+        <div className="flex items-center gap-2">
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+          <span className="text-[10px] font-semibold text-emerald-400">ZYRON Retail v2.3</span>
+          <span className="text-[9px] text-gray-600">•</span>
+          <Store size={9} className="text-gray-500" />
+          <select
+            value={selectedStore}
+            onChange={(e) => { setSelectedStore(e.target.value); showToast(`Do'kon o'zgartirildi: ${e.target.value}`); }}
+            className="text-[9px] text-gray-400 bg-transparent border-none outline-none cursor-pointer"
+          >
+            {stores.map((s) => <option key={s} value={s} className="bg-[#0a0f1a]">{s}</option>)}
+          </select>
+        </div>
+        <span className="text-[9px] text-gray-600 font-mono">{clock}</span>
+      </div>
+
       {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
         {[
@@ -220,14 +274,14 @@ export default function RetailDemo() {
                     <td className="py-2 px-2.5">
                       <span
                         className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-medium ${
-                          p.stock === 0
+                          getStock(p.id) === 0
                             ? "bg-red-500/15 text-red-400"
-                            : p.stock <= p.minStock
+                            : getStock(p.id) <= p.minStock
                             ? "bg-amber-500/15 text-amber-400"
                             : "bg-emerald-500/15 text-emerald-400"
                         }`}
                       >
-                        {p.stock === 0 ? "Tugagan" : p.stock + " / " + p.minStock}
+                        {getStock(p.id) === 0 ? "Tugagan" : getStock(p.id) + " / " + p.minStock}
                       </span>
                     </td>
                     <td className="py-2 px-2.5">
@@ -236,7 +290,7 @@ export default function RetailDemo() {
                     </td>
                     <td className="py-2 px-2.5">
                       <span className="flex items-center gap-1 text-gray-300">
-                        {p.sold}
+                        {getSold(p.id)}
                         {p.trend === "up" ? (
                           <TrendingUp size={10} className="text-emerald-400" />
                         ) : (
@@ -245,7 +299,13 @@ export default function RetailDemo() {
                       </span>
                     </td>
                     <td className="py-2 px-2">
-                      <Eye size={10} className="text-gray-600 hover:text-white" />
+                      <button
+                        onClick={(e) => { e.stopPropagation(); sellProduct(p.id); }}
+                        disabled={getStock(p.id) === 0}
+                        className="px-1.5 py-0.5 rounded text-[8px] font-medium bg-emerald-500/15 text-emerald-400 hover:bg-emerald-500/25 disabled:opacity-30 disabled:cursor-not-allowed"
+                      >
+                        Sot
+                      </button>
                     </td>
                   </tr>
                 ))}
@@ -257,6 +317,8 @@ export default function RetailDemo() {
           {selectedProduct && (() => {
             const p = inventory.find((x) => x.id === selectedProduct)!;
             const margin = ((p.price - p.cost) / p.price * 100).toFixed(1);
+            const liveStock = getStock(p.id);
+            const liveSold = getSold(p.id);
             return (
               <div className="p-3 rounded-lg bg-white/[0.03] border border-emerald-500/20 grid grid-cols-2 sm:grid-cols-4 gap-3">
                 <div>
@@ -269,11 +331,11 @@ export default function RetailDemo() {
                 </div>
                 <div>
                   <p className="text-[9px] text-gray-500">Jami daromad</p>
-                  <p className="text-[10px] text-white font-bold">{fmt(p.sold * p.price)}</p>
+                  <p className="text-[10px] text-white font-bold">{fmt(liveSold * p.price)}</p>
                 </div>
                 <div>
-                  <p className="text-[9px] text-gray-500">Sof foyda</p>
-                  <p className="text-[10px] text-emerald-400 font-bold">{fmt(p.sold * (p.price - p.cost))}</p>
+                  <p className="text-[9px] text-gray-500">Qoldiq / Sof foyda</p>
+                  <p className="text-[10px] text-emerald-400 font-bold">{liveStock} ta · {fmt(liveSold * (p.price - p.cost))}</p>
                 </div>
               </div>
             );
@@ -293,11 +355,20 @@ export default function RetailDemo() {
                   <div>
                     <p className="text-[11px] font-bold text-white">{s.name}</p>
                     <p className="text-[9px] text-gray-500">{s.email}</p>
+                    <p className="text-[9px] text-blue-400 font-mono">{s.contact}</p>
                   </div>
                 </div>
-                <span className={`text-[8px] px-1.5 py-0.5 rounded font-medium ${s.status === "active" ? "bg-emerald-500/15 text-emerald-400" : "bg-gray-500/15 text-gray-400"}`}>
-                  {s.status === "active" ? "Faol" : "Nofaol"}
-                </span>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => showToast(`Buyurtma yuborildi: ${s.name}`)}
+                    className="px-2 py-0.5 rounded text-[8px] font-medium bg-emerald-500/15 text-emerald-400 hover:bg-emerald-500/25"
+                  >
+                    Buyurtma
+                  </button>
+                  <span className={`text-[8px] px-1.5 py-0.5 rounded font-medium ${s.status === "active" ? "bg-emerald-500/15 text-emerald-400" : "bg-gray-500/15 text-gray-400"}`}>
+                    {s.status === "active" ? "Faol" : "Nofaol"}
+                  </span>
+                </div>
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[9px]">
                 <div>
@@ -324,6 +395,16 @@ export default function RetailDemo() {
 
       {tab === "movements" && (
         <div className="flex-1 overflow-auto rounded-lg border border-white/[0.06]">
+          <div className="flex items-center justify-between p-2 border-b border-white/[0.06] bg-white/[0.02]">
+            <span className="text-[10px] text-gray-400">{movements.length} ta harakat qayd etildi</span>
+            <button
+              onClick={() => showToast("Muvaffaqiyatli! Yangi harakat qo'shildi")}
+              className="flex items-center gap-1 px-2 py-0.5 rounded text-[8px] font-medium bg-emerald-500/15 text-emerald-400 hover:bg-emerald-500/25"
+            >
+              <Plus size={8} />
+              Yangi
+            </button>
+          </div>
           <table className="w-full text-[10px]">
             <thead>
               <tr className="bg-white/[0.03] border-b border-white/[0.06]">
@@ -361,7 +442,16 @@ export default function RetailDemo() {
         <div className="flex-1 space-y-3">
           {/* Category Revenue */}
           <div className="bg-white/[0.02] rounded-xl border border-white/[0.06] p-3">
-            <p className="text-[11px] font-bold text-white mb-3">Kategoriya bo'yicha daromad</p>
+            <div className="flex items-center justify-between mb-3">
+              <p className="text-[11px] font-bold text-white">Kategoriya bo'yicha daromad</p>
+              <button
+                onClick={() => showToast("Hisobot yuklab olindi!")}
+                className="flex items-center gap-1 text-[8px] text-gray-500 hover:text-emerald-400 transition-colors"
+              >
+                <TrendingUp size={9} />
+                Export
+              </button>
+            </div>
             <div className="space-y-2">
               {categoryReport.map((c) => (
                 <div key={c.name} className="flex items-center gap-2">

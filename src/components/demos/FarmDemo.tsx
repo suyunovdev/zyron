@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Leaf, Cpu, TrendingUp, DollarSign, Thermometer, Droplets, Wind,
   AlertTriangle, CheckCircle, ChevronDown, ChevronUp, Zap, Battery,
@@ -8,6 +8,27 @@ import {
 } from "lucide-react";
 
 type FarmTab = "fields" | "sensors" | "crops" | "moliya";
+
+type Toast = { id: number; msg: string; type: "success" | "warning" | "info" };
+
+function useToast() {
+  const [toasts, setToasts] = useState<Toast[]>([]);
+  const show = (msg: string, type: Toast["type"] = "success") => {
+    const id = Date.now();
+    setToasts((p) => [...p, { id, msg, type }]);
+    setTimeout(() => setToasts((p) => p.filter((t) => t.id !== id)), 2500);
+  };
+  return { toasts, show };
+}
+
+function useClock() {
+  const [time, setTime] = useState(() => new Date().toLocaleTimeString("uz-UZ", { hour: "2-digit", minute: "2-digit", second: "2-digit" }));
+  useEffect(() => {
+    const id = setInterval(() => setTime(new Date().toLocaleTimeString("uz-UZ", { hour: "2-digit", minute: "2-digit", second: "2-digit" })), 1000);
+    return () => clearInterval(id);
+  }, []);
+  return time;
+}
 
 function fmt(n: number) {
   return n.toLocaleString("uz-UZ") + " so'm";
@@ -87,6 +108,10 @@ const MONTHS = ["Yan", "Fev", "Mar", "Apr", "May", "Iyn", "Iyl", "Avg", "Sen", "
 export default function FarmDemo() {
   const [tab, setTab] = useState<FarmTab>("fields");
   const [selectedField, setSelectedField] = useState<number | null>(null);
+  const { toasts, show } = useToast();
+  const clock = useClock();
+  const [irrigatedFields, setIrrigatedFields] = useState<Set<number>>(new Set());
+  const [acknowledgedAlerts, setAcknowledgedAlerts] = useState<Set<number>>(new Set());
 
   const tabs = [
     { key: "fields" as FarmTab, label: "Dalalar", icon: Leaf },
@@ -111,6 +136,34 @@ export default function FarmDemo() {
 
   return (
     <div className="flex flex-col gap-2.5 min-h-[520px]">
+      {/* Toast notifications */}
+      <div className="fixed top-3 right-3 z-50 flex flex-col gap-1.5 pointer-events-none">
+        {toasts.map((t) => (
+          <div key={t.id} className={`px-3 py-2 rounded-lg text-[10px] font-medium shadow-lg border backdrop-blur-sm transition-all ${
+            t.type === "success" ? "bg-emerald-900/90 text-emerald-300 border-emerald-500/40"
+            : t.type === "warning" ? "bg-amber-900/90 text-amber-300 border-amber-500/40"
+            : "bg-blue-900/90 text-blue-300 border-blue-500/40"
+          }`}>
+            {t.msg}
+          </div>
+        ))}
+      </div>
+
+      {/* Status bar */}
+      <div className="flex items-center justify-between px-3 py-1.5 rounded-lg bg-green-500/[0.06] border border-green-500/15">
+        <div className="flex items-center gap-2">
+          <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse flex-shrink-0" />
+          <span className="text-[9px] font-medium text-green-400">ZYRON Farm v1.5</span>
+          <span className="text-[9px] text-gray-600">•</span>
+          <span className="text-[9px] text-gray-500">Toshkent viloyati fermer xo'jaligi</span>
+        </div>
+        <div className="flex items-center gap-2 text-[9px] text-gray-500">
+          <span>☀ 28°C • Toshkent</span>
+          <span className="text-gray-700">|</span>
+          <span className="font-mono text-gray-400">{clock}</span>
+        </div>
+      </div>
+
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex gap-1.5 flex-wrap">
@@ -179,13 +232,19 @@ export default function FarmDemo() {
                         { label: "Tuproq turi", val: f.soil },
                         { label: "pH darajasi", val: f.ph.toString() },
                         { label: "Namlik", val: f.moisture + "%" },
-                        { label: "Sug'orildi", val: f.irrigated },
+                        { label: "Sug'orildi", val: irrigatedFields.has(f.id) ? "Hozir sug'orildi" : f.irrigated },
                       ].map((d) => (
                         <div key={d.label} className="p-1.5 rounded-lg bg-white/[0.04]">
                           <p className="text-[7px] text-gray-600">{d.label}</p>
                           <p className="text-[9px] text-white font-medium">{d.val}</p>
                         </div>
                       ))}
+                      <button
+                        onClick={(e) => { e.stopPropagation(); setIrrigatedFields((p) => new Set([...p, f.id])); show(`${f.name} sug'orish boshlandi`, "success"); }}
+                        className="col-span-2 mt-1 py-1 rounded-lg bg-blue-500/15 border border-blue-500/25 text-blue-400 text-[8px] font-medium hover:bg-blue-500/25 transition-colors"
+                      >
+                        {irrigatedFields.has(f.id) ? "Sug'orilmoqda..." : "Sug'orishni boshlash"}
+                      </button>
                     </div>
                   )}
                 </button>
@@ -296,9 +355,17 @@ export default function FarmDemo() {
               { msg: "S-06 sensori 2 soatdan beri oflayn — 6-dala nazorat qilinmaydi", type: "danger", icon: Zap },
               { msg: "4-dala harorati 34°C ga yetdi — sug'orish tavsiya etiladi", type: "warning", icon: Thermometer },
             ].map((a, i) => (
-              <div key={i} className={`flex items-start gap-2 p-2.5 rounded-lg border ${a.type === "danger" ? "bg-red-500/[0.06] border-red-500/20" : "bg-amber-500/[0.06] border-amber-500/20"}`}>
-                <a.icon size={11} className={a.type === "danger" ? "text-red-400 mt-0.5 flex-shrink-0" : "text-amber-400 mt-0.5 flex-shrink-0"} />
-                <p className="text-[9px] text-gray-300">{a.msg}</p>
+              <div key={i} className={`flex items-start gap-2 p-2.5 rounded-lg border ${acknowledgedAlerts.has(i) ? "bg-white/[0.03] border-white/[0.06] opacity-50" : a.type === "danger" ? "bg-red-500/[0.06] border-red-500/20" : "bg-amber-500/[0.06] border-amber-500/20"}`}>
+                <a.icon size={11} className={acknowledgedAlerts.has(i) ? "text-gray-600 mt-0.5 flex-shrink-0" : a.type === "danger" ? "text-red-400 mt-0.5 flex-shrink-0" : "text-amber-400 mt-0.5 flex-shrink-0"} />
+                <p className="text-[9px] text-gray-300 flex-1">{a.msg}</p>
+                {!acknowledgedAlerts.has(i) && (
+                  <button
+                    onClick={() => { setAcknowledgedAlerts((p) => new Set([...p, i])); show("Ogohlantirish tasdiqlandi", "info"); }}
+                    className="flex-shrink-0 px-1.5 py-0.5 rounded bg-white/[0.08] text-[7px] text-gray-400 hover:bg-white/[0.14] transition-colors"
+                  >
+                    Tasdiqlash
+                  </button>
+                )}
               </div>
             ))}
           </div>

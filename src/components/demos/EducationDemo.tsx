@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   GraduationCap, Calendar, CreditCard, BookOpen,
   Phone, Clock, Users, Search, Star, Bell,
@@ -109,6 +109,11 @@ export default function EducationDemo() {
   const [groupFilter, setGroupFilter] = useState("Barchasi");
   const [selectedBlock, setSelectedBlock] = useState<{ day: number; slot: SlotKey } | null>(null);
   const [remindedIds, setRemindedIds] = useState<Set<number>>(new Set());
+  const [time, setTime] = useState(new Date());
+  const [toast, setToast] = useState<string | null>(null);
+
+  useEffect(() => { const t = setInterval(() => setTime(new Date()), 60000); return () => clearInterval(t); }, []);
+  useEffect(() => { if (toast) { const t = setTimeout(() => setToast(null), 2500); return () => clearTimeout(t); } }, [toast]);
 
   const tabs = [
     { key: "students"  as EduTab, label: "O'quvchilar", icon: GraduationCap },
@@ -137,7 +142,26 @@ export default function EducationDemo() {
   const selectedCourseData = selectedCourse ? courses.find((c) => c.id === selectedCourse) : null;
 
   return (
-    <div className="flex flex-col gap-2.5 min-h-[520px]">
+    <div className="relative flex flex-col gap-2.5 min-h-[520px]">
+      {/* Status bar */}
+      <div className="flex items-center justify-between px-2.5 py-1.5 rounded-lg bg-white/[0.03] border border-white/[0.06]">
+        <div className="flex items-center gap-1.5">
+          <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
+          <span className="text-[9px] font-semibold text-white">ZYRON Education</span>
+          <span className="text-[8px] text-gray-600">v2.5</span>
+          <span className="text-[8px] text-gray-600">•</span>
+          <span className="text-[8px] text-gray-500">O'quv markaz</span>
+          <span className="text-[8px] text-gray-600">•</span>
+          <span className="text-[8px] text-cyan-500/80">Bugun: 18 Iyul, Juma</span>
+        </div>
+        <span className="text-[8px] text-gray-500 font-mono">
+          {time.toLocaleTimeString("uz-UZ", { hour: "2-digit", minute: "2-digit" })}
+        </span>
+      </div>
+
+      {/* Toast */}
+      {toast && <div className="absolute bottom-3 right-3 z-50 px-3 py-1.5 rounded-lg bg-emerald-500/90 text-white text-[10px] font-medium shadow-lg">{toast}</div>}
+
       {/* Tabs */}
       <div className="flex items-center justify-between flex-wrap gap-2">
         <div className="flex gap-1.5 flex-wrap">
@@ -374,7 +398,10 @@ export default function EducationDemo() {
                         <td key={di} className="py-1 px-1 text-center">
                           {course ? (
                             <button
-                              onClick={() => setSelectedBlock(isSelected ? null : { day: di, slot: slot.key })}
+                              onClick={() => {
+                                setSelectedBlock(isSelected ? null : { day: di, slot: slot.key });
+                                if (!isSelected) setToast(`${course.name} — ${slot.label} dars tanlandi`);
+                              }}
                               className={`w-full px-1 py-1 rounded border text-[7px] font-medium transition-all ${courseSlotColor[course.id]} ${isSelected ? "ring-1 ring-white/30 scale-105" : "hover:opacity-80"}`}
                             >
                               {course.name.split("/")[0].trim()}
@@ -512,7 +539,10 @@ export default function EducationDemo() {
                         </span>
                       ) : (
                         <button
-                          onClick={() => setRemindedIds((prev) => { const n = new Set(prev); n.add(p.id); return n; })}
+                          onClick={() => {
+                            setRemindedIds((prev) => { const n = new Set(prev); n.add(p.id); return n; });
+                            setToast(`${p.name.split(" ")[0]}ga to'lov eslatmasi jo'natildi`);
+                          }}
                           className={`flex items-center justify-center gap-0.5 px-2 py-0.5 rounded text-[8px] transition-colors ${
                             remindedIds.has(p.id)
                               ? "bg-amber-500/20 text-amber-300 border border-amber-500/30"

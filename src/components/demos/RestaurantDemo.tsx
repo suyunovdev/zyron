@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { Clock, Users, ChefHat, Bell, Check, UtensilsCrossed, ClipboardList, TrendingUp, AlertTriangle, Plus } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Clock, Users, ChefHat, Bell, Check, UtensilsCrossed, ClipboardList, TrendingUp, AlertTriangle, Plus, Utensils } from "lucide-react";
 
 type TableStatus = "free" | "occupied" | "reserved" | "bill";
 type Tab = "tables" | "kitchen" | "menu" | "stats";
@@ -26,14 +26,14 @@ const initialTables: { id: number; seats: number; status: TableStatus; guest?: s
 ];
 
 const kitchenOrders = [
-  { table: 1, items: ["Osh", "Salat"], status: "cooking" as const, time: "5 min", waiter: "Dilshod", priority: false },
-  { table: 4, items: ["Lag'mon x2"], status: "ready" as const, time: "0 min", waiter: "Sardor", priority: false },
-  { table: 7, items: ["Kabob x3", "Osh x2"], status: "cooking" as const, time: "8 min", waiter: "Malika", priority: true },
-  { table: 10, items: ["Manti x6"], status: "cooking" as const, time: "12 min", waiter: "Sardor", priority: false },
-  { table: 1, items: ["Choy x2"], status: "ready" as const, time: "0 min", waiter: "Dilshod", priority: false },
-  { table: 13, items: ["Tandir kabob", "Osh"], status: "cooking" as const, time: "15 min", waiter: "Dilshod", priority: true },
-  { table: 16, items: ["Lag'mon", "Somsa x2"], status: "cooking" as const, time: "7 min", waiter: "Malika", priority: false },
-  { table: 13, items: ["Salat x2", "Choy x4"], status: "ready" as const, time: "0 min", waiter: "Dilshod", priority: false },
+  { table: 1, items: ["Osh", "Salat"], status: "cooking" as const, time: "5 min", waiter: "Dilshod", chef: "Akmal", priority: false },
+  { table: 4, items: ["Lag'mon x2"], status: "ready" as const, time: "0 min", waiter: "Sardor", chef: "Akmal", priority: false },
+  { table: 7, items: ["Kabob x3", "Osh x2"], status: "cooking" as const, time: "8 min", waiter: "Malika", chef: "Sherzod", priority: true },
+  { table: 10, items: ["Manti x6"], status: "cooking" as const, time: "12 min", waiter: "Sardor", chef: "Akmal", priority: false },
+  { table: 1, items: ["Choy x2"], status: "ready" as const, time: "0 min", waiter: "Dilshod", chef: "Kamola", priority: false },
+  { table: 13, items: ["Tandir kabob", "Osh"], status: "cooking" as const, time: "15 min", waiter: "Dilshod", chef: "Sherzod", priority: true },
+  { table: 16, items: ["Lag'mon", "Somsa x2"], status: "cooking" as const, time: "7 min", waiter: "Malika", chef: "Akmal", priority: false },
+  { table: 13, items: ["Salat x2", "Choy x4"], status: "ready" as const, time: "0 min", waiter: "Dilshod", chef: "Kamola", priority: false },
 ];
 
 const menuItems = [
@@ -80,6 +80,21 @@ export default function RestaurantDemo() {
   const [tables, setTables] = useState(initialTables);
   const [selected, setSelected] = useState<number | null>(null);
   const [tab, setTab] = useState<Tab>("tables");
+  const [time, setTime] = useState(new Date());
+  const [toast, setToast] = useState<string | null>(null);
+  const [bellTables, setBellTables] = useState<Set<number>>(new Set());
+
+  useEffect(() => {
+    const t = setInterval(() => setTime(new Date()), 60000);
+    return () => clearInterval(t);
+  }, []);
+
+  useEffect(() => {
+    if (toast) {
+      const t = setTimeout(() => setToast(null), 2500);
+      return () => clearTimeout(t);
+    }
+  }, [toast]);
 
   const selectedTable = tables.find((t) => t.id === selected);
   const stats = {
@@ -91,6 +106,19 @@ export default function RestaurantDemo() {
 
   return (
     <div className="flex flex-col gap-2.5 min-h-[520px]">
+      {/* Status Bar */}
+      <div className="flex items-center justify-between pb-2 border-b border-white/[0.06]">
+        <div className="flex items-center gap-2">
+          <div className="w-5 h-5 rounded bg-orange-500/20 flex items-center justify-center">
+            <Utensils size={10} className="text-orange-400" />
+          </div>
+          <span className="text-[10px] font-bold text-gray-300">ZYRON Restaurant</span>
+          <span className="text-[8px] text-gray-600">v2.0</span>
+          <span className="text-[8px] text-gray-600 border-l border-white/10 pl-2">Toshkent, Mirzo Ulug&apos;bek ko&apos;chasi 14 · +998 71 300-02-02</span>
+        </div>
+        <span className="text-[9px] text-gray-600">{time.toLocaleDateString("uz-UZ", { day: "numeric", month: "short" })} · {time.toLocaleTimeString("uz-UZ", { hour: "2-digit", minute: "2-digit" })}</span>
+      </div>
+
       {/* Stats Bar */}
       <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
         {[
@@ -188,13 +216,13 @@ export default function RestaurantDemo() {
                 )}
                 <div className="flex gap-1.5">
                   {selectedTable.status === "free" && (
-                    <button onClick={() => setTables((prev) => prev.map((t) => t.id === selectedTable.id ? { ...t, status: "occupied" as const, guest: "Yangi mehmon", waiter: "Dilshod", time: "Hozir" } : t))} className="flex-1 py-1.5 rounded-lg bg-blue-500/20 border border-blue-500/30 text-blue-400 text-[10px] font-medium hover:bg-blue-500/30 transition-colors">Joylashtirish</button>
+                    <button onClick={() => { setTables((prev) => prev.map((t) => t.id === selectedTable.id ? { ...t, status: "occupied" as const, guest: "Yangi mehmon", waiter: "Dilshod", time: "Hozir" } : t)); setToast(`Stol #${selectedTable.id} joylashtirildi!`); }} className="flex-1 py-1.5 rounded-lg bg-blue-500/20 border border-blue-500/30 text-blue-400 text-[10px] font-medium hover:bg-blue-500/30 transition-colors">Joylashtirish</button>
                   )}
                   {selectedTable.status === "occupied" && (
-                    <button onClick={() => setTables((prev) => prev.map((t) => t.id === selectedTable.id ? { ...t, status: "bill" as const } : t))} className="flex-1 py-1.5 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 text-[10px] font-medium hover:bg-purple-500/30 transition-colors">Hisob so'rash</button>
+                    <button onClick={() => { setTables((prev) => prev.map((t) => t.id === selectedTable.id ? { ...t, status: "bill" as const } : t)); setToast(`Stol #${selectedTable.id} — hisob so'raldi`); }} className="flex-1 py-1.5 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 text-[10px] font-medium hover:bg-purple-500/30 transition-colors">Hisob so'rash</button>
                   )}
                   {selectedTable.status === "bill" && (
-                    <button onClick={() => { setTables((prev) => prev.map((t) => t.id === selectedTable.id ? { id: t.id, seats: t.seats, status: "free" as const } : t)); setSelected(null); }} className="flex-1 py-1.5 rounded-lg bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 text-[10px] font-medium hover:bg-emerald-500/30 transition-colors">Hisobni yopish</button>
+                    <button onClick={() => { setTables((prev) => prev.map((t) => t.id === selectedTable.id ? { id: t.id, seats: t.seats, status: "free" as const } : t)); setToast(`Stol #${selectedTable.id} — to'lov qabul qilindi!`); setSelected(null); }} className="flex-1 py-1.5 rounded-lg bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 text-[10px] font-medium hover:bg-emerald-500/30 transition-colors">Hisobni yopish</button>
                   )}
                 </div>
               </div>
@@ -233,12 +261,23 @@ export default function RestaurantDemo() {
                   <span className={`text-[9px] px-1.5 py-0.5 rounded-full ${order.status === "ready" ? "bg-emerald-500/20 text-emerald-400" : "bg-amber-500/20 text-amber-400"}`}>
                     {order.status === "ready" ? "Tayyor!" : "Tayyorlanmoqda"}
                   </span>
+                  {order.status === "ready" && bellTables.has(order.table) && (
+                    <Bell size={10} className="text-emerald-400 animate-bounce" />
+                  )}
                 </div>
                 <p className="text-[10px] text-gray-400 truncate">{order.items.join(", ")}</p>
-                <p className="text-[9px] text-gray-600">Ofitsiant: {order.waiter}</p>
+                <p className="text-[9px] text-gray-600">Ofitsiant: {order.waiter} · Oshpaz: {order.chef}</p>
               </div>
-              <div className="text-right">
+              <div className="text-right flex flex-col items-end gap-1">
                 <p className={`text-[11px] font-medium ${order.status === "ready" ? "text-emerald-400" : "text-amber-400"}`}>{order.time}</p>
+                {order.status === "ready" && (
+                  <button
+                    onClick={() => { setBellTables((prev) => { const n = new Set(prev); n.add(order.table); return n; }); setToast(`Stol #${order.table} — taom topshirildi!`); }}
+                    className="text-[8px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30 transition-colors"
+                  >
+                    Topshirish
+                  </button>
+                )}
               </div>
             </div>
           ))}
@@ -273,6 +312,8 @@ export default function RestaurantDemo() {
           ))}
         </div>
       )}
+
+      {toast && <div className="fixed bottom-4 right-4 z-50 px-4 py-2 rounded-lg bg-emerald-500/90 text-white text-xs font-medium shadow-lg animate-in fade-in slide-in-from-bottom-2">{toast}</div>}
 
       {tab === "stats" && (
         <div className="flex-1 space-y-3">

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   FileText, CreditCard, Users, BarChart2,
   CheckCircle, Clock, AlertTriangle, TrendingUp, TrendingDown,
@@ -138,6 +138,14 @@ export default function BillingDemo() {
   const [clientSearch, setClientSearch] = useState("");
   const [selectedTxn, setSelectedTxn] = useState<string | null>(null);
   const [showNew, setShowNew] = useState(false);
+  const [time, setTime] = useState(new Date());
+  const [toast, setToast] = useState<string | null>(null);
+  const [invoiceStatuses, setInvoiceStatuses] = useState<Record<string, Invoice["status"]>>(
+    Object.fromEntries(invoices.map((i) => [i.id, i.status]))
+  );
+
+  useEffect(() => { const t = setInterval(() => setTime(new Date()), 60000); return () => clearInterval(t); }, []);
+  useEffect(() => { if (toast) { const t = setTimeout(() => setToast(null), 2500); return () => clearTimeout(t); } }, [toast]);
 
   const tabs: { key: Tab; label: string; icon: React.ElementType }[] = [
     { key: "faktura", label: "Hisob-fakturalar", icon: FileText },
@@ -147,14 +155,24 @@ export default function BillingDemo() {
   ];
 
   const totalOutstanding = invoices
-    .filter((i) => i.status !== "tolangan")
+    .filter((i) => invoiceStatuses[i.id] !== "tolangan")
     .reduce((s, i) => s + i.amount, 0);
   const overdueAmount = invoices
-    .filter((i) => i.status === "muddati")
+    .filter((i) => invoiceStatuses[i.id] === "muddati")
     .reduce((s, i) => s + i.amount, 0);
   const thisMonthRev = invoices
-    .filter((i) => i.status === "tolangan")
+    .filter((i) => invoiceStatuses[i.id] === "tolangan")
     .reduce((s, i) => s + i.amount, 0);
+
+  const markAsPaid = (invId: string, client: string) => {
+    setInvoiceStatuses((prev) => ({ ...prev, [invId]: "tolangan" }));
+    setToast(`${invId} — to'lov tasdiqlandi`);
+  };
+
+  const handleNewInvoice = () => {
+    setShowNew(false);
+    setToast("Yangi hisob-faktura yaratildi");
+  };
 
   const filteredClients = clients.filter(
     (c) =>
@@ -175,7 +193,24 @@ export default function BillingDemo() {
   );
 
   return (
-    <div className="flex flex-col gap-2.5 min-h-[520px]">
+    <div className="relative flex flex-col gap-2.5 min-h-[520px]">
+      {/* Status bar */}
+      <div className="flex items-center justify-between px-2.5 py-1.5 rounded-lg bg-white/[0.03] border border-white/[0.06]">
+        <div className="flex items-center gap-1.5">
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+          <span className="text-[9px] font-semibold text-white">ZYRON Billing</span>
+          <span className="text-[8px] text-gray-600">v1.8</span>
+          <span className="text-[8px] text-gray-600">•</span>
+          <span className="text-[8px] text-gray-500">Bosh hisobchi</span>
+        </div>
+        <span className="text-[8px] text-gray-500 font-mono">
+          {time.toLocaleTimeString("uz-UZ", { hour: "2-digit", minute: "2-digit" })}
+        </span>
+      </div>
+
+      {/* Toast */}
+      {toast && <div className="absolute bottom-3 right-3 z-50 px-3 py-1.5 rounded-lg bg-emerald-500/90 text-white text-[10px] font-medium shadow-lg">{toast}</div>}
+
       {/* Tabs */}
       <div className="flex items-center justify-between">
         <div className="flex gap-1.5 flex-wrap">
@@ -237,7 +272,7 @@ export default function BillingDemo() {
                 <input placeholder="Summa (so'm)" className="px-2.5 py-1.5 rounded-lg bg-white/[0.05] border border-white/10 text-[10px] text-white placeholder:text-gray-600 focus:outline-none focus:border-emerald-500/50" />
                 <input placeholder="Muddat sana" className="px-2.5 py-1.5 rounded-lg bg-white/[0.05] border border-white/10 text-[10px] text-white placeholder:text-gray-600 focus:outline-none focus:border-emerald-500/50" />
               </div>
-              <button onClick={() => setShowNew(false)} className="mt-2 w-full py-1.5 rounded-lg bg-emerald-500/20 text-emerald-400 text-[10px] font-medium hover:bg-emerald-500/30 transition-colors">
+              <button onClick={handleNewInvoice} className="mt-2 w-full py-1.5 rounded-lg bg-emerald-500/20 text-emerald-400 text-[10px] font-medium hover:bg-emerald-500/30 transition-colors">
                 Saqlash
               </button>
             </div>
@@ -258,7 +293,7 @@ export default function BillingDemo() {
               </thead>
               <tbody>
                 {invoices.map((inv) => {
-                  const s = statusCfg(inv.status);
+                  const s = statusCfg(invoiceStatuses[inv.id] ?? inv.status);
                   const expanded = expandedInv === inv.id;
                   return (
                     <>
@@ -300,6 +335,14 @@ export default function BillingDemo() {
                                 <span className="text-gray-300">Jami</span>
                                 <span className="text-emerald-400">{fmt(inv.amount)}</span>
                               </div>
+                              {invoiceStatuses[inv.id] !== "tolangan" && (
+                                <button
+                                  onClick={(e) => { e.stopPropagation(); markAsPaid(inv.id, inv.client); }}
+                                  className="mt-1.5 w-full py-1 rounded-lg bg-emerald-500/15 text-emerald-400 text-[9px] font-medium border border-emerald-500/20 hover:bg-emerald-500/25 transition-colors"
+                                >
+                                  To'langan deb belgilash
+                                </button>
+                              )}
                             </div>
                           </td>
                         </tr>

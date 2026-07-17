@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { Search, Plus, Minus, Trash2, CreditCard, Banknote, QrCode, Receipt, Percent, User, Clock, RotateCcw, Tag, ShoppingBag } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Search, Plus, Minus, Trash2, CreditCard, Banknote, QrCode, Receipt, Percent, User, Clock, RotateCcw, Tag, ShoppingBag, Monitor } from "lucide-react";
 
 const categories = ["Barchasi", "Ichimliklar", "Taomlar", "Snacklar", "Desertlar", "Kombo"];
 
@@ -37,14 +37,14 @@ type CartItem = { id: number; name: string; price: number; qty: number; emoji: s
 type Tab = "sale" | "history" | "shift";
 
 const orderHistory = [
-  { id: "#2847", time: "14:32", items: 4, total: 142000, method: "Karta", cashier: "Aziz" },
-  { id: "#2846", time: "14:15", items: 2, total: 60000, method: "Naqd", cashier: "Aziz" },
-  { id: "#2845", time: "13:58", items: 6, total: 234000, method: "QR", cashier: "Nilufar" },
-  { id: "#2844", time: "13:41", items: 1, total: 28000, method: "Naqd", cashier: "Aziz" },
-  { id: "#2843", time: "13:22", items: 3, total: 95000, method: "Karta", cashier: "Nilufar" },
-  { id: "#2842", time: "13:05", items: 5, total: 178000, method: "Naqd", cashier: "Aziz" },
-  { id: "#2841", time: "12:48", items: 2, total: 53000, method: "Karta", cashier: "Sardor" },
-  { id: "#2840", time: "12:30", items: 8, total: 312000, method: "QR", cashier: "Aziz" },
+  { id: "#2847", time: "14:32", date: "17 Iyul 2026", items: 4, total: 142000, method: "Karta", cashier: "Aziz", phone: "+998 90 123 45 67" },
+  { id: "#2846", time: "14:15", date: "17 Iyul 2026", items: 2, total: 60000, method: "Naqd", cashier: "Aziz", phone: "+998 91 987 65 43" },
+  { id: "#2845", time: "13:58", date: "17 Iyul 2026", items: 6, total: 234000, method: "QR", cashier: "Nilufar", phone: "+998 93 456 78 90" },
+  { id: "#2844", time: "13:41", date: "17 Iyul 2026", items: 1, total: 28000, method: "Naqd", cashier: "Aziz", phone: "" },
+  { id: "#2843", time: "13:22", date: "17 Iyul 2026", items: 3, total: 95000, method: "Karta", cashier: "Nilufar", phone: "+998 99 321 54 76" },
+  { id: "#2842", time: "13:05", date: "17 Iyul 2026", items: 5, total: 178000, method: "Naqd", cashier: "Aziz", phone: "" },
+  { id: "#2841", time: "12:48", date: "17 Iyul 2026", items: 2, total: 53000, method: "Karta", cashier: "Sardor", phone: "+998 94 654 32 10" },
+  { id: "#2840", time: "12:30", date: "17 Iyul 2026", items: 8, total: 312000, method: "QR", cashier: "Aziz", phone: "+998 97 111 22 33" },
 ];
 
 function fmt(n: number) {
@@ -63,6 +63,20 @@ export default function POSDemo() {
   const [discount, setDiscount] = useState(0);
   const [paid, setPaid] = useState(false);
   const [customer, setCustomer] = useState("");
+  const [time, setTime] = useState(new Date());
+  const [toast, setToast] = useState<string | null>(null);
+
+  useEffect(() => {
+    const t = setInterval(() => setTime(new Date()), 60000);
+    return () => clearInterval(t);
+  }, []);
+
+  useEffect(() => {
+    if (toast) {
+      const t = setTimeout(() => setToast(null), 2500);
+      return () => clearTimeout(t);
+    }
+  }, [toast]);
 
   const filtered = products.filter(
     (p) =>
@@ -98,9 +112,13 @@ export default function POSDemo() {
         </div>
         <p className="text-lg font-bold text-white">To'lov qabul qilindi!</p>
         <p className="text-sm text-gray-400">Chek #{2848} — {fmt(total)}</p>
-        <div className="w-56 border border-dashed border-gray-700 rounded-lg p-4 text-[10px] text-gray-500 font-mono space-y-1">
-          <p className="text-center font-bold text-gray-300 text-xs">ZYRON POS</p>
+        <div className="w-64 border border-dashed border-gray-700 rounded-lg p-4 text-[10px] text-gray-500 font-mono space-y-1">
+          <p className="text-center font-bold text-gray-300 text-xs">ZYRON CAFE & BISTRO</p>
+          <p className="text-center text-[8px] text-gray-600">Toshkent, Chilonzor 9-kvartal, 47-uy</p>
+          <p className="text-center text-[8px] text-gray-600">Tel: +998 71 200-01-01</p>
+          <div className="border-t border-dashed border-gray-700 my-1.5" />
           <p className="text-center text-[9px]">Chek #{2848} · {new Date().toLocaleTimeString("uz-UZ", { hour: "2-digit", minute: "2-digit" })}</p>
+          <p className="text-center text-[9px]">Kassir: Aziz · Terminal #1</p>
           {customer && <p className="text-center text-[9px]">Mijoz: {customer}</p>}
           <div className="border-t border-dashed border-gray-700 my-1.5" />
           {cart.map((c) => (
@@ -117,7 +135,9 @@ export default function POSDemo() {
           <div className="flex justify-between font-bold text-gray-300 text-xs">
             <span>JAMI:</span><span>{fmt(total)}</span>
           </div>
+          <div className="border-t border-dashed border-gray-700 my-1.5" />
           <p className="text-center text-[8px] mt-2">Xaridingiz uchun rahmat!</p>
+          <p className="text-center text-[7px] text-gray-600">www.zyron.uz · ZYRON POS v2.1</p>
         </div>
         <button
           onClick={() => { setPaid(false); setCart([]); setDiscount(0); setCustomer(""); }}
@@ -125,12 +145,26 @@ export default function POSDemo() {
         >
           <RotateCcw size={12} /> Yangi savdo
         </button>
+        {toast && <div className="fixed bottom-4 right-4 z-50 px-4 py-2 rounded-lg bg-emerald-500/90 text-white text-xs font-medium shadow-lg animate-in fade-in slide-in-from-bottom-2">{toast}</div>}
       </div>
     );
   }
 
   return (
     <div className="flex flex-col gap-2.5 min-h-[520px]">
+      {/* Status Bar */}
+      <div className="flex items-center justify-between mb-0 pb-2 border-b border-white/[0.06]">
+        <div className="flex items-center gap-2">
+          <div className="w-5 h-5 rounded bg-blue-500/20 flex items-center justify-center">
+            <Monitor size={10} className="text-blue-400" />
+          </div>
+          <span className="text-[10px] font-bold text-gray-300">ZYRON POS</span>
+          <span className="text-[8px] text-gray-600">v2.1</span>
+          <span className="text-[8px] text-gray-600 border-l border-white/10 pl-2">Kassir: Aziz · Terminal #1 · Smena: 08:00-20:00</span>
+        </div>
+        <span className="text-[9px] text-gray-600">{time.toLocaleDateString("uz-UZ", { day: "numeric", month: "short" })} · {time.toLocaleTimeString("uz-UZ", { hour: "2-digit", minute: "2-digit" })}</span>
+      </div>
+
       {/* Tabs */}
       <div className="flex items-center justify-between">
         <div className="flex gap-1.5">
@@ -293,9 +327,9 @@ export default function POSDemo() {
             {/* Payment Buttons */}
             <div className="grid grid-cols-3 gap-1.5 mt-2.5">
               {[
-                { icon: Banknote, label: "Naqd", color: "emerald", onClick: () => cart.length > 0 && setPaid(true) },
-                { icon: CreditCard, label: "Karta", color: "blue", onClick: () => cart.length > 0 && setPaid(true) },
-                { icon: QrCode, label: "QR / Payme", color: "purple", onClick: () => cart.length > 0 && setPaid(true) },
+                { icon: Banknote, label: "Naqd", color: "emerald", onClick: () => { if (cart.length > 0) { setToast("Naqd to'lov qabul qilindi!"); setPaid(true); } } },
+                { icon: CreditCard, label: "Karta", color: "blue", onClick: () => { if (cart.length > 0) { setToast("Karta orqali to'lov qabul qilindi!"); setPaid(true); } } },
+                { icon: QrCode, label: "QR / Payme", color: "purple", onClick: () => { if (cart.length > 0) { setToast("QR to'lov muvaffaqiyatli!"); setPaid(true); } } },
               ].map((btn) => (
                 <button
                   key={btn.label}
@@ -365,6 +399,8 @@ export default function POSDemo() {
           </div>
         </div>
       )}
+
+      {toast && <div className="fixed bottom-4 right-4 z-50 px-4 py-2 rounded-lg bg-emerald-500/90 text-white text-xs font-medium shadow-lg animate-in fade-in slide-in-from-bottom-2">{toast}</div>}
 
       {tab === "shift" && (
         <div className="flex-1 space-y-3">

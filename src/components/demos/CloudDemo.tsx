@@ -88,10 +88,31 @@ function GaugeRing({ value, color, size = 40, label }: { value: number; color: s
   );
 }
 
+const regionFlags: Record<string, string> = {
+  Frankfurt: "🇩🇪",
+  Toshkent: "🇺🇿",
+  Amsterdam: "🇳🇱",
+};
+
 export default function CloudDemo() {
   const [tab, setTab] = useState<Tab>("servers");
   const [selectedServer, setSelectedServer] = useState<string | null>("srv-01");
   const [liveValues, setLiveValues] = useState<Record<string, { cpu: number; ram: number; disk: number }>>({});
+  const [time, setTime] = useState(new Date());
+  const [toast, setToast] = useState<string | null>(null);
+  const [deploying, setDeploying] = useState(false);
+
+  useEffect(() => {
+    const t = setInterval(() => setTime(new Date()), 60000);
+    return () => clearInterval(t);
+  }, []);
+
+  useEffect(() => {
+    if (toast) {
+      const t = setTimeout(() => setToast(null), 2500);
+      return () => clearTimeout(t);
+    }
+  }, [toast]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -126,6 +147,22 @@ export default function CloudDemo() {
 
   return (
     <div className="flex flex-col gap-3 min-h-[420px]">
+      {/* Status Bar */}
+      <div className="flex items-center justify-between pb-2 border-b border-white/[0.06]">
+        <div className="flex items-center gap-2">
+          <div className="w-5 h-5 rounded bg-sky-500/20 flex items-center justify-center">
+            <Server size={10} className="text-sky-400" />
+          </div>
+          <span className="text-[10px] font-bold text-gray-300">ZYRON Cloud</span>
+          <span className="text-[8px] text-gray-600">v1.5</span>
+          <span className="text-[8px] text-gray-600 border-l border-white/10 pl-2">Uptime: 99.99%</span>
+          <span className="text-[7px] px-1.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">🟢 Barcha tizimlar ishlayapti</span>
+        </div>
+        <span className="text-[9px] text-gray-600">{time.toLocaleDateString("uz-UZ", { day: "numeric", month: "short" })} · {time.toLocaleTimeString("uz-UZ", { hour: "2-digit", minute: "2-digit" })}</span>
+      </div>
+
+      {toast && <div className="fixed bottom-4 right-4 z-50 px-4 py-2 rounded-lg bg-emerald-500/90 text-white text-xs font-medium shadow-lg animate-in fade-in slide-in-from-bottom-2">{toast}</div>}
+
       {/* Top Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
         {[
@@ -181,7 +218,7 @@ export default function CloudDemo() {
                     <span className={`w-1.5 h-1.5 rounded-full ${cfg.dot} ${s.status === "running" ? "animate-pulse" : ""}`} />
                     <div className="min-w-0">
                       <p className="text-[10px] font-medium text-white truncate">{s.name}</p>
-                      <p className="text-[8px] text-gray-500">{s.region} · {s.id}</p>
+                      <p className="text-[8px] text-gray-500">{regionFlags[s.region] ?? ""} {s.region} · {s.id}</p>
                     </div>
                   </div>
                   {s.status === "running" && (
@@ -208,7 +245,7 @@ export default function CloudDemo() {
                 <div className="space-y-1.5 text-[10px]">
                   {[
                     ["Holat", statusConfig[selected.status].label],
-                    ["Region", selected.region],
+                    ["Region", `${regionFlags[selected.region] ?? ""} ${selected.region}`],
                     ["OS", selected.os],
                     ["IP", selected.ip],
                     ["Uptime", selected.uptime],
@@ -246,6 +283,22 @@ export default function CloudDemo() {
 
       {tab === "deploy" && (
         <div className="flex-1 space-y-1.5 overflow-y-auto max-h-[300px]">
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-[11px] font-bold text-white">Deploy tarixi</p>
+            <button
+              onClick={() => {
+                if (deploying) return;
+                setDeploying(true);
+                setToast("Deploy boshlandi: main → production...");
+                setTimeout(() => { setDeploying(false); setToast("Deploy muvaffaqiyatli yakunlandi!"); }, 3000);
+              }}
+              disabled={deploying}
+              className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[9px] font-medium transition-colors ${deploying ? "bg-amber-500/15 text-amber-400 border border-amber-500/25" : "bg-sky-500/15 text-sky-400 border border-sky-500/25 hover:bg-sky-500/25"}`}
+            >
+              <RefreshCw size={9} className={deploying ? "animate-spin" : ""} />
+              {deploying ? "Deploy..." : "Yangi deploy"}
+            </button>
+          </div>
           {deployments.map((dep) => {
             const cfg = deployStatus[dep.status];
             const Icon = cfg.icon;

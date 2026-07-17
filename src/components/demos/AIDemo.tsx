@@ -53,7 +53,14 @@ export default function AIDemo() {
   ]);
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
+  const [typingSpeed, setTypingSpeed] = useState(0);
+  const [time, setTime] = useState(new Date());
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const t = setInterval(() => setTime(new Date()), 60000);
+    return () => clearInterval(t);
+  }, []);
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -77,8 +84,10 @@ export default function AIDemo() {
       let charIndex = 0;
       const interval = setInterval(() => {
         charIndex += 4;
+        setTypingSpeed(Math.floor(200 + Math.random() * 120));
         if (charIndex >= response.length) {
           clearInterval(interval);
+          setTypingSpeed(0);
           setMessages((prev) =>
             prev.map((m, i) =>
               i === prev.length - 1 ? { role: "ai", text: response, typing: false } : m
@@ -112,6 +121,27 @@ export default function AIDemo() {
 
   return (
     <div className="flex flex-col min-h-[420px] bg-white/[0.01] rounded-xl border border-white/[0.06] overflow-hidden">
+      {/* Status Bar */}
+      <div className="flex items-center justify-between px-3 py-1.5 border-b border-white/[0.06] bg-white/[0.01]">
+        <div className="flex items-center gap-2">
+          <div className="w-4 h-4 rounded bg-cyan-500/20 flex items-center justify-center">
+            <Sparkles size={8} className="text-cyan-400" />
+          </div>
+          <span className="text-[9px] font-bold text-gray-300">ZYRON AI</span>
+          <span className="text-[7px] text-gray-600">v3.0</span>
+          <span className="text-[7px] text-gray-600 border-l border-white/10 pl-1.5">Model: GPT-o&apos;zbek</span>
+          <span className="text-[7px] px-1.5 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">847K+ ta&apos;lim ma&apos;lumotlari asosida</span>
+        </div>
+        <div className="flex items-center gap-2">
+          {isTyping && typingSpeed > 0 && (
+            <span className="text-[7px] text-amber-400 flex items-center gap-1">
+              <Zap size={7} className="animate-pulse" />{typingSpeed} t/s
+            </span>
+          )}
+          <span className="text-[8px] text-gray-600">{time.toLocaleTimeString("uz-UZ", { hour: "2-digit", minute: "2-digit" })}</span>
+        </div>
+      </div>
+
       {/* Header */}
       <div className="flex items-center justify-between px-3 py-2.5 border-b border-white/[0.06] bg-white/[0.02]">
         <div className="flex items-center gap-2">

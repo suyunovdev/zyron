@@ -1,10 +1,30 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   BedDouble, CalendarCheck, Users, BarChart2, LogIn, LogOut,
   Search, Star, TrendingUp, CheckCircle, Clock, Wrench, Flag,
 } from "lucide-react";
+
+function useToast() {
+  const [toast, setToast] = useState<{ msg: string; key: number } | null>(null);
+  const show = (msg: string) => setToast({ msg, key: Date.now() });
+  useEffect(() => {
+    if (!toast) return;
+    const t = setTimeout(() => setToast(null), 2500);
+    return () => clearTimeout(t);
+  }, [toast]);
+  return { toast, show };
+}
+
+function useClock() {
+  const [time, setTime] = useState(() => new Date().toLocaleTimeString("uz-UZ", { hour: "2-digit", minute: "2-digit", second: "2-digit" }));
+  useEffect(() => {
+    const t = setInterval(() => setTime(new Date().toLocaleTimeString("uz-UZ", { hour: "2-digit", minute: "2-digit", second: "2-digit" })), 1000);
+    return () => clearInterval(t);
+  }, []);
+  return time;
+}
 
 type HotelTab = "xonalar" | "bron" | "mehmonlar" | "hisobot";
 
@@ -124,19 +144,32 @@ export default function HotelDemo() {
   const [floorFilter, setFloorFilter] = useState<0 | 1 | 2 | 3>(0);
   const [reservations, setReservations] = useState<Reservation[]>(INITIAL_RESERVATIONS);
   const [guestSearch, setGuestSearch] = useState("");
+  const { toast, show } = useToast();
+  const clock = useClock();
 
   const filteredRooms = floorFilter === 0 ? rooms : rooms.filter((r) => r.floor === floorFilter);
 
   const cycleStatus = (id: string) => {
-    setRooms((prev) =>
-      prev.map((r) => r.id === id ? { ...r, status: STATUS_CYCLE[r.status] } : r)
-    );
+    setRooms((prev) => {
+      const room = prev.find((r) => r.id === id);
+      if (room) {
+        const next = STATUS_CYCLE[room.status];
+        show(`Xona ${id}: ${STATUS_LABEL[room.status]} → ${STATUS_LABEL[next]}`);
+      }
+      return prev.map((r) => r.id === id ? { ...r, status: STATUS_CYCLE[r.status] } : r);
+    });
   };
 
-  const checkIn = (id: number) =>
+  const checkIn = (id: number) => {
+    const res = reservations.find((r) => r.id === id);
+    if (res) show(`Check-in: ${res.guest} — Xona ${res.room}`);
     setReservations((prev) => prev.map((r) => r.id === id ? { ...r, status: "Faol" } : r));
-  const checkOut = (id: number) =>
+  };
+  const checkOut = (id: number) => {
+    const res = reservations.find((r) => r.id === id);
+    if (res) show(`Check-out: ${res.guest} — Xona ${res.room} bo'shatildi`);
     setReservations((prev) => prev.map((r) => r.id === id ? { ...r, status: "Chiqdi" } : r));
+  };
 
   const filteredGuests = GUESTS.filter((g) =>
     g.name.toLowerCase().includes(guestSearch.toLowerCase()) ||
@@ -150,6 +183,28 @@ export default function HotelDemo() {
 
   return (
     <div className="flex flex-col gap-2.5 min-h-[520px]">
+      {/* Status bar */}
+      <div className="flex items-center justify-between px-3 py-1.5 rounded-lg bg-amber-500/[0.07] border border-amber-500/20 text-[9px]">
+        <div className="flex items-center gap-2">
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+          <span className="text-amber-400 font-semibold">ZYRON Hotel v2.0</span>
+          <span className="text-gray-600">·</span>
+          <span className="text-gray-400">Grand Samarkand Hotel</span>
+        </div>
+        <div className="flex items-center gap-2 text-gray-400">
+          <span className="text-emerald-400 font-medium">Bandlik: {occupancyRate}%</span>
+          <span className="text-gray-600">·</span>
+          <span className="font-mono">{clock}</span>
+        </div>
+      </div>
+
+      {/* Toast */}
+      {toast && (
+        <div className="fixed bottom-4 right-4 z-50 px-3 py-2 rounded-lg bg-amber-500/90 text-black text-[10px] font-semibold shadow-lg animate-pulse">
+          {toast.msg}
+        </div>
+      )}
+
       {/* Tabs */}
       <div className="flex items-center justify-between flex-wrap gap-2">
         <div className="flex gap-1.5 flex-wrap">

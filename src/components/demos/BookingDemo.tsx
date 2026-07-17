@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Calendar, Clock, Users, Scissors, Star, Search, Plus, CheckCircle,
   XCircle, Phone, ChevronDown, ChevronUp, Sparkles, TrendingUp,
@@ -82,6 +82,11 @@ export default function BookingDemo() {
   const [newForm, setNewForm] = useState<NewBookingForm>({ client: "", service: "Soch olish", duration: 30 });
   const [clientSearch, setClientSearch] = useState("");
   const [editingService, setEditingService] = useState<number | null>(null);
+  const [time, setTime] = useState(new Date());
+  const [toast, setToast] = useState<string | null>(null);
+
+  useEffect(() => { const t = setInterval(() => setTime(new Date()), 60000); return () => clearInterval(t); }, []);
+  useEffect(() => { if (toast) { const t = setTimeout(() => setToast(null), 2500); return () => clearTimeout(t); } }, [toast]);
 
   const statusColor: Record<string, string> = {
     Tasdiqlangan: "bg-emerald-500/15 text-emerald-400 border border-emerald-500/25",
@@ -92,10 +97,16 @@ export default function BookingDemo() {
   const slotBooking = (day: number, hour: string) =>
     bookings.find((b) => b.day === day && b.hour === hour && b.status !== "Bekor");
 
-  const confirmBooking = (id: number) =>
+  const confirmBooking = (id: number) => {
+    const b = bookings.find((b) => b.id === id);
     setBookings((prev) => prev.map((b) => b.id === id ? { ...b, status: "Tasdiqlangan" } : b));
-  const cancelBooking = (id: number) =>
+    if (b) setToast(`${b.client} — bron tasdiqlandi`);
+  };
+  const cancelBooking = (id: number) => {
+    const b = bookings.find((b) => b.id === id);
     setBookings((prev) => prev.map((b) => b.id === id ? { ...b, status: "Bekor" } : b));
+    if (b) setToast(`${b.client} — bron bekor qilindi`);
+  };
 
   const handleSlotClick = (day: number, hour: string) => {
     if (slotBooking(day, hour)) return;
@@ -127,6 +138,7 @@ export default function BookingDemo() {
     setShowForm(false);
     setSelectedSlot(null);
     setNewForm({ client: "", service: "Soch olish", duration: 30 });
+    setToast(`${newForm.client} — yangi bron qo'shildi`);
   };
 
   const todayBookings = bookings.filter((b) => b.day === 0 && b.status !== "Bekor");
@@ -140,7 +152,24 @@ export default function BookingDemo() {
   );
 
   return (
-    <div className="flex flex-col gap-2.5 min-h-[520px]">
+    <div className="relative flex flex-col gap-2.5 min-h-[520px]">
+      {/* Status bar */}
+      <div className="flex items-center justify-between px-2.5 py-1.5 rounded-lg bg-white/[0.03] border border-white/[0.06]">
+        <div className="flex items-center gap-1.5">
+          <span className="w-1.5 h-1.5 rounded-full bg-violet-400 animate-pulse" />
+          <span className="text-[9px] font-semibold text-white">ZYRON Booking</span>
+          <span className="text-[8px] text-gray-600">v1.5</span>
+          <span className="text-[8px] text-gray-600">•</span>
+          <span className="text-[8px] text-gray-500">Beauty Salon Luxury</span>
+        </div>
+        <span className="text-[8px] text-gray-500 font-mono">
+          {time.toLocaleTimeString("uz-UZ", { hour: "2-digit", minute: "2-digit" })}
+        </span>
+      </div>
+
+      {/* Toast */}
+      {toast && <div className="absolute bottom-3 right-3 z-50 px-3 py-1.5 rounded-lg bg-emerald-500/90 text-white text-[10px] font-medium shadow-lg">{toast}</div>}
+
       {/* Tabs */}
       <div className="flex items-center justify-between flex-wrap gap-2">
         <div className="flex gap-1.5 flex-wrap">

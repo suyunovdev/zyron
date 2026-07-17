@@ -1,12 +1,32 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Truck, User, Map, BarChart2,
   MapPin, Clock, CheckCircle, Package, Star, AlertCircle,
   Navigation, Fuel, Zap, TrendingUp, ThumbsUp, ArrowRight,
   Bike, Car, Phone,
 } from "lucide-react";
+
+function useToast() {
+  const [toast, setToast] = useState<{ msg: string; key: number } | null>(null);
+  const show = (msg: string) => setToast({ msg, key: Date.now() });
+  useEffect(() => {
+    if (!toast) return;
+    const t = setTimeout(() => setToast(null), 2500);
+    return () => clearTimeout(t);
+  }, [toast]);
+  return { toast, show };
+}
+
+function useClock() {
+  const [time, setTime] = useState(() => new Date().toLocaleTimeString("uz-UZ", { hour: "2-digit", minute: "2-digit", second: "2-digit" }));
+  useEffect(() => {
+    const t = setInterval(() => setTime(new Date().toLocaleTimeString("uz-UZ", { hour: "2-digit", minute: "2-digit", second: "2-digit" })), 1000);
+    return () => clearInterval(t);
+  }, []);
+  return time;
+}
 
 type Tab = "yetkazish" | "kuryerlar" | "xarita" | "tahlil";
 
@@ -159,6 +179,9 @@ export default function LogisticsDemo() {
   const [expandedDel, setExpandedDel] = useState<string | null>(null);
   const [selectedRoute, setSelectedRoute] = useState<string | null>(null);
   const [assignCourier, setAssignCourier] = useState<number | null>(null);
+  const [deliveryList, setDeliveryList] = useState<Delivery[]>(deliveries);
+  const { toast, show } = useToast();
+  const clock = useClock();
 
   const tabs: { key: Tab; label: string; icon: React.ElementType }[] = [
     { key: "yetkazish", label: "Yetkazishlar", icon: Package },
@@ -167,14 +190,61 @@ export default function LogisticsDemo() {
     { key: "tahlil", label: "Tahlil", icon: BarChart2 },
   ];
 
-  const activeCount = deliveries.filter((d) => d.status === "yolda").length;
-  const doneToday = deliveries.filter((d) => d.status === "yetkazildi").length;
-  const problemCount = deliveries.filter((d) => d.status === "muammo").length;
+  const activeCount = deliveryList.filter((d) => d.status === "yolda").length;
+  const doneToday = deliveryList.filter((d) => d.status === "yetkazildi").length;
+  const problemCount = deliveryList.filter((d) => d.status === "muammo").length;
+
+  const cycleDeliveryStatus = (id: string) => {
+    const statusCycle: Record<DeliveryStatus, DeliveryStatus> = {
+      olingan: "yolda",
+      yolda: "yetkazildi",
+      yetkazildi: "yetkazildi",
+      muammo: "olingan",
+    };
+    setDeliveryList((prev) => prev.map((d) => {
+      if (d.id !== id) return d;
+      const next = statusCycle[d.status];
+      const labels: Record<DeliveryStatus, string> = { olingan: "Olingan", yolda: "Yo'lda", yetkazildi: "Yetkazildi", muammo: "Muammo" };
+      show(`${id}: ${labels[d.status]} → ${labels[next]}`);
+      return { ...d, status: next };
+    }));
+  };
+
+  const handleAssignCourier = (courierId: number, courierName: string) => {
+    if (assignCourier === courierId) {
+      setAssignCourier(null);
+    } else {
+      setAssignCourier(courierId);
+      show(`Buyurtma tayinlandi: ${courierName}`);
+    }
+  };
 
   const selectedRouteData = routes.find((r) => r.id === selectedRoute);
 
   return (
     <div className="flex flex-col gap-2.5 min-h-[520px]">
+      {/* Status bar */}
+      <div className="flex items-center justify-between px-3 py-1.5 rounded-lg bg-orange-500/[0.07] border border-orange-500/20 text-[9px]">
+        <div className="flex items-center gap-2">
+          <span className="w-1.5 h-1.5 rounded-full bg-orange-400 animate-pulse" />
+          <span className="text-orange-400 font-semibold">ZYRON Logistics v2.5</span>
+          <span className="text-gray-600">·</span>
+          <span className="text-gray-400">Toshkent Hub</span>
+        </div>
+        <div className="flex items-center gap-2 text-gray-400">
+          <span className="text-emerald-400 font-medium">Faol yetkazishlar: {activeCount}</span>
+          <span className="text-gray-600">·</span>
+          <span className="font-mono">{clock}</span>
+        </div>
+      </div>
+
+      {/* Toast */}
+      {toast && (
+        <div className="fixed bottom-4 right-4 z-50 px-3 py-2 rounded-lg bg-orange-500/90 text-white text-[10px] font-semibold shadow-lg">
+          {toast.msg}
+        </div>
+      )}
+
       {/* Tabs */}
       <div className="flex items-center justify-between">
         <div className="flex gap-1.5 flex-wrap">
@@ -210,7 +280,7 @@ export default function LogisticsDemo() {
           {/* Stats */}
           <div className="grid grid-cols-4 gap-2 mb-3">
             {[
-              { label: "Jami", value: deliveries.length, color: "text-white" },
+              { label: "Jami", value: deliveryList.length, color: "text-white" },
               { label: "Yetkazilmoqda", value: activeCount, color: "text-orange-400" },
               { label: "Bajarildi", value: doneToday, color: "text-emerald-400" },
               { label: "Muammo", value: problemCount, color: "text-red-400" },
@@ -235,7 +305,7 @@ export default function LogisticsDemo() {
                 </tr>
               </thead>
               <tbody>
-                {deliveries.map((d) => {
+                {deliveryList.map((d) => {
                   const s = statusCfg(d.status);
                   const expanded = expandedDel === d.id;
                   return (
@@ -267,8 +337,16 @@ export default function LogisticsDemo() {
                             {s.label}
                           </span>
                         </td>
-                        <td className="py-2 px-2 text-gray-600">
-                          <Navigation size={9} />
+                        <td className="py-2 px-2 text-gray-600" onClick={(e) => e.stopPropagation()}>
+                          {d.status !== "yetkazildi" && (
+                            <button
+                              onClick={() => cycleDeliveryStatus(d.id)}
+                              className="px-1.5 py-0.5 rounded bg-orange-500/15 text-orange-400 hover:bg-orange-500/25 text-[8px] transition-colors"
+                            >
+                              Yangilash
+                            </button>
+                          )}
+                          {d.status === "yetkazildi" && <Navigation size={9} />}
                         </td>
                       </tr>
                       {expanded && d.timeline && d.timeline.length > 0 && (
@@ -363,7 +441,7 @@ export default function LogisticsDemo() {
                 </div>
 
                 <button
-                  onClick={() => setAssignCourier(assignCourier === courier.id ? null : courier.id)}
+                  onClick={() => handleAssignCourier(courier.id, courier.name)}
                   disabled={courier.status === "offline"}
                   className={`mt-2 w-full py-1 rounded-md text-[9px] font-medium transition-colors border ${
                     courier.status === "offline"

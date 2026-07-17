@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Users, Clock, DollarSign, Calendar, CheckCircle, XCircle,
   Phone, Search, Eye, EyeOff, TrendingUp, AlertCircle,
@@ -96,6 +96,11 @@ export default function HRMDemo() {
   const [leaveStatuses, setLeaveStatuses] = useState<Record<number, string>>(
     Object.fromEntries(leaveRequests.map((r) => [r.id, r.status]))
   );
+  const [time, setTime] = useState(new Date());
+  const [toast, setToast] = useState<string | null>(null);
+
+  useEffect(() => { const t = setInterval(() => setTime(new Date()), 60000); return () => clearInterval(t); }, []);
+  useEffect(() => { if (toast) { const t = setTimeout(() => setToast(null), 2500); return () => clearTimeout(t); } }, [toast]);
 
   const tabs = [
     { key: "employees" as HRMTab, label: "Xodimlar",  icon: Users    },
@@ -124,6 +129,22 @@ export default function HRMDemo() {
 
   const payAll = () => {
     setPayStatuses(Object.fromEntries(payroll.map((p) => [p.name, true])));
+    setToast("Barcha xodimlarga ish haqi to'landi");
+  };
+
+  const handlePayToggle = (name: string, currentPaid: boolean) => {
+    setPayStatuses((prev) => ({ ...prev, [name]: !currentPaid }));
+    if (!currentPaid) setToast(`${name.split(" ")[0]}ga ish haqi o'tkazildi`);
+  };
+
+  const handleLeaveApprove = (id: number, name: string) => {
+    setLeaveStatuses((p) => ({ ...p, [id]: "approved" }));
+    setToast(`${name.split(" ")[0]}ning ta'tili tasdiqlandi`);
+  };
+
+  const handleLeaveReject = (id: number, name: string) => {
+    setLeaveStatuses((p) => ({ ...p, [id]: "rejected" }));
+    setToast(`${name.split(" ")[0]}ning ta'tili rad etildi`);
   };
 
   const presentCount  = attendance.filter((a) => a.checkIn && !isLate(a.checkIn)).length;
@@ -145,7 +166,24 @@ export default function HRMDemo() {
   const approvedLeaves  = Object.values(leaveStatuses).filter((s) => s === "approved").length;
 
   return (
-    <div className="flex flex-col gap-2.5 min-h-[520px]">
+    <div className="relative flex flex-col gap-2.5 min-h-[520px]">
+      {/* Status bar */}
+      <div className="flex items-center justify-between px-2.5 py-1.5 rounded-lg bg-white/[0.03] border border-white/[0.06]">
+        <div className="flex items-center gap-1.5">
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+          <span className="text-[9px] font-semibold text-white">ZYRON HRM</span>
+          <span className="text-[8px] text-gray-600">v2.0</span>
+          <span className="text-[8px] text-gray-600">•</span>
+          <span className="text-[8px] text-gray-500">ZYRON Technologies</span>
+        </div>
+        <span className="text-[8px] text-gray-500 font-mono">
+          {time.toLocaleTimeString("uz-UZ", { hour: "2-digit", minute: "2-digit" })}
+        </span>
+      </div>
+
+      {/* Toast */}
+      {toast && <div className="absolute bottom-3 right-3 z-50 px-3 py-1.5 rounded-lg bg-emerald-500/90 text-white text-[10px] font-medium shadow-lg">{toast}</div>}
+
       {/* Tabs */}
       <div className="flex items-center justify-between flex-wrap gap-2">
         <div className="flex gap-1.5 flex-wrap">
@@ -384,7 +422,7 @@ export default function HRMDemo() {
           <div className="flex items-center justify-between flex-wrap gap-2">
             <div>
               <p className="text-[11px] font-bold text-white">Ish haqi jadvali</p>
-              <p className="text-[9px] text-gray-500">{selectedMonth} 2025 · {paidCount}/{payroll.length} to'langan</p>
+              <p className="text-[9px] text-gray-500">{selectedMonth} 2026 · {paidCount}/{payroll.length} to'langan · ZYRON Technologies</p>
             </div>
             <div className="flex gap-1 flex-wrap">
               {months.map((m) => (
@@ -472,7 +510,7 @@ export default function HRMDemo() {
                     <td className="py-2 px-2.5 text-right text-white font-bold">{fmt(netPay(p))}</td>
                     <td className="py-2 px-2.5 text-center">
                       <button
-                        onClick={() => setPayStatuses((prev) => ({ ...prev, [p.name]: !prev[p.name] }))}
+                        onClick={() => handlePayToggle(p.name, payStatuses[p.name])}
                         className={`px-2 py-0.5 rounded text-[8px] font-medium border transition-colors ${
                           payStatuses[p.name]
                             ? "bg-emerald-500/15 text-emerald-400 border-emerald-500/20"
@@ -560,13 +598,13 @@ export default function HRMDemo() {
                       {status === "pending" ? (
                         <>
                           <button
-                            onClick={() => setLeaveStatuses((p) => ({ ...p, [req.id]: "approved" }))}
+                            onClick={() => handleLeaveApprove(req.id, req.name)}
                             className="flex items-center gap-0.5 px-2 py-1 rounded-lg bg-emerald-500/15 text-emerald-400 text-[9px] hover:bg-emerald-500/25 transition-colors border border-emerald-500/20"
                           >
                             <CheckCircle size={9} /> Tasdiqlash
                           </button>
                           <button
-                            onClick={() => setLeaveStatuses((p) => ({ ...p, [req.id]: "rejected" }))}
+                            onClick={() => handleLeaveReject(req.id, req.name)}
                             className="flex items-center gap-0.5 px-2 py-1 rounded-lg bg-red-500/15 text-red-400 text-[9px] hover:bg-red-500/25 transition-colors border border-red-500/20"
                           >
                             <XCircle size={9} /> Rad

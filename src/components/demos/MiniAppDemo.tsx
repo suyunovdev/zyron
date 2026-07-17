@@ -1,12 +1,31 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Smartphone, Database, TrendingUp, Settings, Plus, GripVertical,
   CheckCircle, Users, Clock, BarChart2, Table, Layers, Eye, X
 } from "lucide-react";
 
 type MATab = "loyiha" | "sahifalar" | "malumotlar" | "analitika";
+
+type Toast = { id: number; msg: string; type: "success" | "info" | "warning" };
+function useToast() {
+  const [toasts, setToasts] = useState<Toast[]>([]);
+  const show = (msg: string, type: Toast["type"] = "success") => {
+    const id = Date.now();
+    setToasts((p) => [...p, { id, msg, type }]);
+    setTimeout(() => setToasts((p) => p.filter((t) => t.id !== id)), 2500);
+  };
+  return { toasts, show };
+}
+function useClock() {
+  const [time, setTime] = useState(() => new Date().toLocaleTimeString("uz-UZ", { hour: "2-digit", minute: "2-digit", second: "2-digit" }));
+  useEffect(() => {
+    const id = setInterval(() => setTime(new Date().toLocaleTimeString("uz-UZ", { hour: "2-digit", minute: "2-digit", second: "2-digit" })), 1000);
+    return () => clearInterval(id);
+  }, []);
+  return time;
+}
 
 const themeColors = [
   { name: "Ko'k", bg: "bg-sky-500", text: "text-sky-400", ring: "ring-sky-500" },
@@ -91,6 +110,9 @@ export default function MiniAppDemo() {
   const [selectedScreen, setSelectedScreen] = useState(1);
   const [selectedTable, setSelectedTable] = useState<string | null>(null);
   const [showAddTable, setShowAddTable] = useState(false);
+  const { toasts, show } = useToast();
+  const clock = useClock();
+  const [extraComponents, setExtraComponents] = useState(0);
 
   const tabs = [
     { key: "loyiha" as MATab, label: "Loyiha", icon: Settings },
@@ -113,8 +135,36 @@ export default function MiniAppDemo() {
   const statusLabel = (s: string) =>
     ({ ready: "Tayyor", building: "Qurilmoqda", todo: "Kutmoqda" }[s] ?? s);
 
+  const totalComponents = screens.reduce((s, sc) => s + sc.elements, 0) + extraComponents;
+
   return (
     <div className="flex flex-col gap-2.5 min-h-[520px]">
+      {/* Toast notifications */}
+      <div className="fixed top-3 right-3 z-50 flex flex-col gap-1.5 pointer-events-none">
+        {toasts.map((t) => (
+          <div key={t.id} className={`px-3 py-2 rounded-lg text-[10px] font-medium shadow-lg border backdrop-blur-sm ${
+            t.type === "success" ? "bg-emerald-900/90 text-emerald-300 border-emerald-500/40"
+            : t.type === "warning" ? "bg-amber-900/90 text-amber-300 border-amber-500/40"
+            : "bg-blue-900/90 text-blue-300 border-blue-500/40"
+          }`}>{t.msg}</div>
+        ))}
+      </div>
+
+      {/* Status bar */}
+      <div className="flex items-center justify-between px-3 py-1.5 rounded-lg bg-emerald-500/[0.06] border border-emerald-500/15">
+        <div className="flex items-center gap-2">
+          <Smartphone size={9} className="text-emerald-400 flex-shrink-0" />
+          <span className="text-[9px] font-medium text-emerald-400">ZYRON Mini App v1.0</span>
+          <span className="text-[9px] text-gray-600">•</span>
+          <span className="text-[9px] text-gray-500">Builder</span>
+        </div>
+        <div className="flex items-center gap-2 text-[9px] text-gray-500">
+          <span>Jami komponentlar: <span className="text-emerald-400 font-medium">{totalComponents}</span></span>
+          <span className="text-gray-700">|</span>
+          <span className="font-mono text-gray-400">{clock}</span>
+        </div>
+      </div>
+
       {/* Tabs */}
       <div className="flex items-center justify-between">
         <div className="flex gap-1.5 flex-wrap">
@@ -224,7 +274,7 @@ export default function MiniAppDemo() {
             {screens.map((s) => (
               <button
                 key={s.id}
-                onClick={() => setSelectedScreen(s.id)}
+                onClick={() => { setSelectedScreen(s.id); show(`"${s.name}" sahifasi tanlandi`, "info"); }}
                 className={`flex items-center gap-2 p-2 rounded-lg text-left transition-colors w-full group ${
                   selectedScreen === s.id
                     ? "bg-emerald-500/15 border border-emerald-500/25"
@@ -242,7 +292,10 @@ export default function MiniAppDemo() {
                 </span>
               </button>
             ))}
-            <button className="flex items-center gap-1.5 p-2 rounded-lg border border-dashed border-white/[0.1] text-gray-600 hover:text-gray-400 hover:bg-white/[0.02] transition-colors">
+            <button
+              onClick={() => { setExtraComponents((p) => p + 4); show("Yangi sahifa qo'shildi (+4 komponent)", "success"); }}
+              className="flex items-center gap-1.5 p-2 rounded-lg border border-dashed border-white/[0.1] text-gray-600 hover:text-gray-400 hover:bg-white/[0.02] transition-colors"
+            >
               <Plus size={10} />
               <span className="text-[9px]">Yangi sahifa</span>
             </button>
@@ -305,7 +358,7 @@ export default function MiniAppDemo() {
           <div className="flex items-center justify-between">
             <p className="text-[11px] font-bold text-white">Ma'lumotlar bazasi</p>
             <button
-              onClick={() => setShowAddTable((p) => !p)}
+              onClick={() => { if (!showAddTable) show("Yangi jadval qo'shish rejimi", "info"); setShowAddTable((p) => !p); }}
               className="flex items-center gap-1 px-2 py-1 rounded-md bg-emerald-500/15 text-emerald-400 text-[9px] border border-emerald-500/20 hover:bg-emerald-500/25 transition-colors"
             >
               {showAddTable ? <X size={9} /> : <Plus size={9} />}

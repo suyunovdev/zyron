@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Search, Phone, Mail, MoreHorizontal, Users, DollarSign,
   Clock, CheckCircle, Calendar, MessageSquare, BarChart3, Target,
@@ -59,23 +59,53 @@ const avatarColors = [
 const priorityColors = { high: "text-red-400 bg-red-500/15", medium: "text-amber-400 bg-amber-500/15", low: "text-gray-400 bg-gray-500/15" };
 const priorityLabels = { high: "Yuqori", medium: "O'rta", low: "Past" };
 
+const stageProbability: Record<Stage, number> = {
+  lead: 10, meeting: 30, proposal: 50, negotiation: 75, won: 100,
+};
+
+function relativeTime(daysAgo: number): string {
+  if (daysAgo === 0) return "Bugun";
+  if (daysAgo === 1) return "Kecha";
+  return `${daysAgo} kun oldin`;
+}
+
 export default function CRMDemo() {
   const [tab, setTab] = useState<Tab>("pipeline");
   const [deals, setDeals] = useState(initialDeals);
   const [view, setView] = useState<"board" | "list">("board");
   const [selected, setSelected] = useState<number | null>(null);
   const [taskList, setTaskList] = useState(tasks);
+  const [clock, setClock] = useState(() => new Date().toLocaleTimeString("uz-UZ"));
+  const [toast, setToast] = useState<string | null>(null);
   const selectedDeal = deals.find((d) => d.id === selected);
+
+  useEffect(() => {
+    const t = setInterval(() => setClock(new Date().toLocaleTimeString("uz-UZ")), 1000);
+    return () => clearInterval(t);
+  }, []);
+
+  const showToast = (msg: string) => {
+    setToast(msg);
+    setTimeout(() => setToast(null), 2500);
+  };
 
   const pipelineValue = deals.reduce((s, d) => s + parseInt(d.value), 0);
   const wonValue = deals.filter((d) => d.stage === "won").reduce((s, d) => s + parseInt(d.value), 0);
 
+  const stageTotal = (stage: Stage) => deals.filter((d) => d.stage === stage).reduce((s, d) => s + parseInt(d.value), 0);
+
   const moveDeal = (id: number, newStage: Stage) => {
+    const deal = deals.find((d) => d.id === id);
     setDeals((prev) => prev.map((d) => (d.id === id ? { ...d, stage: newStage } : d)));
+    if (deal) {
+      showToast(`Muvaffaqiyatli! ${deal.name} → ${stageConfig[newStage].label}`);
+    }
   };
 
   const toggleTask = (id: number) => {
     setTaskList((prev) => prev.map((t) => (t.id === id ? { ...t, done: !t.done } : t)));
+    const task = taskList.find((t) => t.id === id);
+    if (task && !task.done) showToast(`Muvaffaqiyatli! Vazifa bajarildi: ${task.title}`);
   };
 
   const tabsConfig: { key: Tab; label: string; icon: typeof Users }[] = [
@@ -87,6 +117,27 @@ export default function CRMDemo() {
 
   return (
     <div className="flex flex-col gap-3 min-h-[420px]">
+      {/* Toast */}
+      {toast && (
+        <div className="fixed top-4 right-4 z-50 px-4 py-2 rounded-lg bg-pink-500/90 text-white text-[11px] font-medium shadow-lg">
+          {toast}
+        </div>
+      )}
+
+      {/* Status Bar */}
+      <div className="flex items-center justify-between px-3 py-1.5 rounded-lg bg-white/[0.03] border border-white/[0.06]">
+        <div className="flex items-center gap-2">
+          <span className="w-1.5 h-1.5 rounded-full bg-pink-400 animate-pulse" />
+          <span className="text-[10px] font-semibold text-pink-400">ZYRON CRM v3.1</span>
+          <span className="text-[9px] text-gray-600">•</span>
+          <Target size={9} className="text-gray-500" />
+          <span className="text-[9px] text-gray-400">Savdo bo'limi</span>
+          <span className="text-[9px] text-gray-600">•</span>
+          <span className="text-[9px] text-gray-500">Pipeline: {pipelineValue}M so'm</span>
+        </div>
+        <span className="text-[9px] text-gray-600 font-mono">{clock}</span>
+      </div>
+
       {/* Top Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
         {[
@@ -151,7 +202,8 @@ export default function CRMDemo() {
                   <div className="flex items-center gap-1.5 mb-2 px-1">
                     <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: cfg.color.includes("emerald") ? "#34d399" : cfg.color.includes("blue") ? "#60a5fa" : cfg.color.includes("amber") ? "#fbbf24" : cfg.color.includes("purple") ? "#a78bfa" : "#9ca3af" }} />
                     <span className={`text-[9px] font-semibold ${cfg.color}`}>{cfg.label}</span>
-                    <span className="text-[9px] text-gray-600 ml-auto">{stageDeals.length}</span>
+                    <span className="text-[8px] text-gray-600">{stageProbability[stage]}%</span>
+                    <span className="text-[9px] text-gray-600 ml-auto">{stageDeals.length} · {stageTotal(stage)}M</span>
                   </div>
                   <div className="flex-1 space-y-1.5 overflow-y-auto max-h-[220px]">
                     {stageDeals.map((deal) => (
@@ -171,7 +223,10 @@ export default function CRMDemo() {
                         <p className="text-[8px] text-gray-500 truncate">{deal.company}</p>
                         <div className="flex items-center justify-between mt-1.5">
                           <span className="text-[9px] font-bold text-emerald-400">{deal.value}</span>
-                          <span className="text-[8px] text-gray-600">{deal.daysAgo === 0 ? "Bugun" : deal.daysAgo + " kun"}</span>
+                          <div className="text-right">
+                            <span className="text-[7px] text-gray-600 block">Oxirgi aloqa:</span>
+                            <span className="text-[7px] text-gray-500">{relativeTime(deal.daysAgo)}</span>
+                          </div>
                         </div>
                       </div>
                     ))}
@@ -347,9 +402,13 @@ export default function CRMDemo() {
                 const total = deals.reduce((s, d) => d.stage === stage ? s + parseInt(d.value) : s, 0);
                 const width = (count / deals.length) * 100;
                 const cfg = stageConfig[stage];
+                const prob = stageProbability[stage];
                 return (
                   <div key={stage} className="flex items-center gap-2">
-                    <span className={`text-[9px] w-16 ${cfg.color} font-medium`}>{cfg.label}</span>
+                    <div className="w-16">
+                      <span className={`text-[9px] ${cfg.color} font-medium`}>{cfg.label}</span>
+                      <span className="text-[7px] text-gray-600 block">Ehtimol: {prob}%</span>
+                    </div>
                     <div className="flex-1 h-4 rounded bg-white/[0.04] overflow-hidden relative">
                       <div
                         className={`h-full rounded ${cfg.bg.replace("/15", "/30")} transition-all flex items-center`}
@@ -358,7 +417,7 @@ export default function CRMDemo() {
                         <span className="text-[8px] text-white font-medium px-1.5">{count} deal</span>
                       </div>
                     </div>
-                    <span className="text-[9px] text-emerald-400 font-medium w-12 text-right">{total}M</span>
+                    <span className="text-[9px] text-emerald-400 font-medium w-16 text-right">{total}M · {Math.round(total * prob / 100)}M</span>
                   </div>
                 );
               })}

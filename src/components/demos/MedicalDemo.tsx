@@ -1,11 +1,31 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Users, Stethoscope, FlaskConical, ClipboardList,
   Search, Plus, ChevronDown, ChevronUp, AlertTriangle,
   Clock, CheckCircle, Star, Heart, Phone, Activity,
 } from "lucide-react";
+
+function useToast() {
+  const [toast, setToast] = useState<{ msg: string; key: number } | null>(null);
+  const show = (msg: string) => setToast({ msg, key: Date.now() });
+  useEffect(() => {
+    if (!toast) return;
+    const t = setTimeout(() => setToast(null), 2500);
+    return () => clearTimeout(t);
+  }, [toast]);
+  return { toast, show };
+}
+
+function useClock() {
+  const [time, setTime] = useState(() => new Date().toLocaleTimeString("uz-UZ", { hour: "2-digit", minute: "2-digit", second: "2-digit" }));
+  useEffect(() => {
+    const t = setInterval(() => setTime(new Date().toLocaleTimeString("uz-UZ", { hour: "2-digit", minute: "2-digit", second: "2-digit" })), 1000);
+    return () => clearInterval(t);
+  }, []);
+  return time;
+}
 
 type MedicalTab = "qabulxona" | "bemorlar" | "shifokorlar" | "laboratoriya";
 
@@ -119,6 +139,8 @@ export default function MedicalDemo() {
   const [newPatient, setNewPatient] = useState({ name: "", birthYear: "", blood: "A+", phone: "" });
   const [lab, setLab] = useState<LabResult[]>(INITIAL_LAB);
   const [viewResult, setViewResult] = useState<number | null>(null);
+  const { toast, show } = useToast();
+  const clock = useClock();
 
   const waitingCount = queue.filter((q) => q.status === "Kutmoqda").length;
   const inConsultation = queue.find((q) => q.status === "Qabulda");
@@ -127,6 +149,7 @@ export default function MedicalDemo() {
     setQueue((prev) => {
       const firstWaiting = prev.find((q) => q.status === "Kutmoqda");
       if (!firstWaiting) return prev;
+      show(`Navbatga chaqirildi: ${firstWaiting.name} — ${firstWaiting.doctor}`);
       return prev.map((q) => {
         if (q.status === "Qabulda") return { ...q, status: "Tugadi" as QueueStatus };
         if (q.id === firstWaiting.id) return { ...q, status: "Qabulda" as QueueStatus };
@@ -157,12 +180,28 @@ export default function MedicalDemo() {
         expanded: false,
       },
     ]);
+    setQueue((prev) => [
+      ...prev,
+      {
+        id: Date.now(),
+        name: newPatient.name,
+        complaint: "Yangi bemor — ko'rik kerak",
+        waitMin: 0,
+        priority: "Oddiy",
+        doctor: "Dr. Karimova",
+        status: "Kutmoqda",
+      },
+    ]);
+    show(`Yangi bemor qo'shildi: ${newPatient.name} — navbatga kiritildi`);
     setShowAddPatient(false);
     setNewPatient({ name: "", birthYear: "", blood: "A+", phone: "" });
   };
 
-  const releaseResult = (id: number) =>
+  const releaseResult = (id: number) => {
+    const l = lab.find((l) => l.id === id);
+    if (l) show(`Lab natija tayyor: ${l.patient} — ${l.test}`);
     setLab((prev) => prev.map((l) => l.id === id && l.status === "Jarayonda" ? { ...l, status: "Tayyor", result: "Tahlil tayyor — natija me'yor doirasida" } : l));
+  };
 
   const labReady = lab.filter((l) => l.status === "Tayyor").length;
   const labPending = lab.filter((l) => l.status === "Kutilmoqda").length;
@@ -171,6 +210,28 @@ export default function MedicalDemo() {
 
   return (
     <div className="flex flex-col gap-2.5 min-h-[520px]">
+      {/* Status bar */}
+      <div className="flex items-center justify-between px-3 py-1.5 rounded-lg bg-rose-500/[0.07] border border-rose-500/20 text-[9px]">
+        <div className="flex items-center gap-2">
+          <span className="w-1.5 h-1.5 rounded-full bg-rose-400 animate-pulse" />
+          <span className="text-rose-400 font-semibold">ZYRON Medical v3.0</span>
+          <span className="text-gray-600">·</span>
+          <span className="text-gray-400">Toshkent Tibbiyot Markazi</span>
+        </div>
+        <div className="flex items-center gap-2 text-gray-400">
+          <span className="text-amber-400 font-medium">Navbatda: {waitingCount} bemor</span>
+          <span className="text-gray-600">·</span>
+          <span className="font-mono">{clock}</span>
+        </div>
+      </div>
+
+      {/* Toast */}
+      {toast && (
+        <div className="fixed bottom-4 right-4 z-50 px-3 py-2 rounded-lg bg-rose-500/90 text-white text-[10px] font-semibold shadow-lg">
+          {toast.msg}
+        </div>
+      )}
+
       {/* Tabs */}
       <div className="flex items-center justify-between flex-wrap gap-2">
         <div className="flex gap-1.5 flex-wrap">

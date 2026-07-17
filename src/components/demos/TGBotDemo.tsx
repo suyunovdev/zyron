@@ -8,6 +8,25 @@ import {
 
 type TGTab = "chat" | "commands" | "funnel" | "statistika";
 
+type Toast = { id: number; msg: string; type: "success" | "info" };
+function useToast() {
+  const [toasts, setToasts] = useState<Toast[]>([]);
+  const show = (msg: string, type: Toast["type"] = "success") => {
+    const id = Date.now();
+    setToasts((p) => [...p, { id, msg, type }]);
+    setTimeout(() => setToasts((p) => p.filter((t) => t.id !== id)), 2500);
+  };
+  return { toasts, show };
+}
+function useClock() {
+  const [time, setTime] = useState(() => new Date().toLocaleTimeString("uz-UZ", { hour: "2-digit", minute: "2-digit", second: "2-digit" }));
+  useEffect(() => {
+    const id = setInterval(() => setTime(new Date().toLocaleTimeString("uz-UZ", { hour: "2-digit", minute: "2-digit", second: "2-digit" })), 1000);
+    return () => clearInterval(id);
+  }, []);
+  return time;
+}
+
 const contacts = [
   { id: 1, name: "Aziz Karimov", username: "@aziz_k", lastMsg: "/price so'radi", time: "14:32", unread: 2, avatar: "AK", online: true },
   { id: 2, name: "Nilufar Rashidova", username: "@nilufar_r", lastMsg: "Rahmat, tushundim!", time: "14:15", unread: 0, avatar: "NR", online: true },
@@ -86,6 +105,9 @@ export default function TGBotDemo() {
   const [newCmd, setNewCmd] = useState({ cmd: "", description: "", reply: "" });
   const [cmdList, setCmdList] = useState(commandsData);
   const bottomRef = useRef<HTMLDivElement>(null);
+  const { toasts, show } = useToast();
+  const clock = useClock();
+  const [deliveredMsgs, setDeliveredMsgs] = useState<Set<number>>(new Set());
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -94,11 +116,15 @@ export default function TGBotDemo() {
   const sendMessage = () => {
     if (!input.trim()) return;
     const now = new Date().toLocaleTimeString("uz-UZ", { hour: "2-digit", minute: "2-digit" });
-    const userMsg: Message = { id: Date.now(), from: "user", text: input, time: now };
+    const msgId = Date.now();
+    const userMsg: Message = { id: msgId, from: "user", text: input, time: now };
     setMessages((prev) => ({ ...prev, [activeContact]: [...(prev[activeContact] || []), userMsg] }));
     const userInput = input.trim();
     setInput("");
     setTyping(true);
+    setTimeout(() => {
+      setDeliveredMsgs((p) => new Set([...p, msgId]));
+    }, 600);
     setTimeout(() => {
       const reply = botReplies[userInput] ?? "Tushunmadim. /help yozing.";
       const botMsg: Message = { id: Date.now() + 1, from: "bot", text: reply, time: now };
@@ -110,6 +136,7 @@ export default function TGBotDemo() {
   const addCommand = () => {
     if (!newCmd.cmd || !newCmd.description) return;
     setCmdList((prev) => [...prev, { ...newCmd, uses: 0 }]);
+    show(`"${newCmd.cmd}" buyrug'i qo'shildi`, "success");
     setNewCmd({ cmd: "", description: "", reply: "" });
     setShowAddCmd(false);
   };
@@ -126,6 +153,31 @@ export default function TGBotDemo() {
 
   return (
     <div className="flex flex-col gap-2.5 min-h-[520px]">
+      {/* Toast notifications */}
+      <div className="fixed top-3 right-3 z-50 flex flex-col gap-1.5 pointer-events-none">
+        {toasts.map((t) => (
+          <div key={t.id} className={`px-3 py-2 rounded-lg text-[10px] font-medium shadow-lg border backdrop-blur-sm ${
+            t.type === "success" ? "bg-emerald-900/90 text-emerald-300 border-emerald-500/40"
+            : "bg-blue-900/90 text-blue-300 border-blue-500/40"
+          }`}>{t.msg}</div>
+        ))}
+      </div>
+
+      {/* Status bar */}
+      <div className="flex items-center justify-between px-3 py-1.5 rounded-lg bg-sky-500/[0.06] border border-sky-500/15">
+        <div className="flex items-center gap-2">
+          <span className="w-1.5 h-1.5 rounded-full bg-sky-400 animate-pulse flex-shrink-0" />
+          <span className="text-[9px] font-medium text-sky-400">ZYRON TG Bot v2.0</span>
+          <span className="text-[9px] text-gray-600">•</span>
+          <span className="text-[9px] text-gray-500">@zyron_assistant_bot</span>
+        </div>
+        <div className="flex items-center gap-2 text-[9px] text-gray-500">
+          <span className="text-emerald-400 font-medium">Online foydalanuvchilar: 342</span>
+          <span className="text-gray-700">|</span>
+          <span className="font-mono text-gray-400">{clock}</span>
+        </div>
+      </div>
+
       {/* Tabs */}
       <div className="flex items-center justify-between">
         <div className="flex gap-1.5 flex-wrap">
@@ -222,8 +274,13 @@ export default function TGBotDemo() {
                     }`}
                   >
                     {msg.text}
-                    <span className={`block text-right text-[7px] mt-0.5 ${msg.from === "user" ? "text-sky-300/60" : "text-gray-600"}`}>
+                    <span className={`flex items-center justify-end gap-0.5 text-[7px] mt-0.5 ${msg.from === "user" ? "text-sky-300/60" : "text-gray-600"}`}>
                       {msg.time}
+                      {msg.from === "user" && (
+                        <span className={`${deliveredMsgs.has(msg.id) ? "text-sky-400" : "text-sky-300/40"}`}>
+                          {deliveredMsgs.has(msg.id) ? "✓✓" : "✓"}
+                        </span>
+                      )}
                     </span>
                   </div>
                 </div>
@@ -341,7 +398,7 @@ export default function TGBotDemo() {
                           <Edit2 size={8} />
                         </button>
                         <button
-                          onClick={() => setCmdList((prev) => prev.filter((_, j) => j !== i))}
+                          onClick={() => { show(`"${c.cmd}" o'chirildi`, "info"); setCmdList((prev) => prev.filter((_, j) => j !== i)); }}
                           className="w-5 h-5 rounded bg-white/[0.06] flex items-center justify-center text-gray-500 hover:text-red-400 hover:bg-red-500/10 transition-colors"
                         >
                           <Trash2 size={8} />

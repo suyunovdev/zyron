@@ -1,12 +1,32 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Package, Warehouse, BarChart2, ArrowUpCircle, ArrowDownCircle,
   Search, Filter, AlertTriangle, TrendingUp, TrendingDown,
   Thermometer, Calendar, RefreshCw, ArrowRight, CheckCircle,
   Zap, Archive, RotateCcw,
 } from "lucide-react";
+
+function useToast() {
+  const [toast, setToast] = useState<{ msg: string; key: number } | null>(null);
+  const show = (msg: string) => setToast({ msg, key: Date.now() });
+  useEffect(() => {
+    if (!toast) return;
+    const t = setTimeout(() => setToast(null), 2500);
+    return () => clearTimeout(t);
+  }, [toast]);
+  return { toast, show };
+}
+
+function useClock() {
+  const [time, setTime] = useState(() => new Date().toLocaleTimeString("uz-UZ", { hour: "2-digit", minute: "2-digit", second: "2-digit" }));
+  useEffect(() => {
+    const t = setInterval(() => setTime(new Date().toLocaleTimeString("uz-UZ", { hour: "2-digit", minute: "2-digit", second: "2-digit" })), 1000);
+    return () => clearInterval(t);
+  }, []);
+  return time;
+}
 
 type Tab = "ombor" | "kirim" | "omborxona" | "tahlil";
 
@@ -97,24 +117,43 @@ export default function InventoryDemo() {
   const [movFilter, setMovFilter] = useState<"Barchasi" | "Kirim" | "Chiqim">("Barchasi");
   const [transferWh, setTransferWh] = useState<number | null>(null);
   const [selectedRoute, setSelectedRoute] = useState<number | null>(null);
+  const [stockData, setStockData] = useState(products.map((p) => ({ ...p })));
+  const [movData, setMovData] = useState(movements.map((m) => ({ ...m })));
+  const { toast, show } = useToast();
+  const clock = useClock();
 
-  const filtered = products.filter(
+  const filtered = stockData.filter(
     (p) =>
       (catFilter === "Barchasi" || p.cat === catFilter) &&
       (p.name.toLowerCase().includes(search.toLowerCase()) || p.sku.toLowerCase().includes(search.toLowerCase()))
   );
 
-  const filteredMov = movements.filter(
+  const filteredMov = movData.filter(
     (m) => movFilter === "Barchasi" || m.type === movFilter
   );
 
-  const todayMov = movements.filter((m) => m.date.startsWith("17 Iyul"));
+  const todayMov = movData.filter((m) => m.date.startsWith("17 Iyul"));
   const todayKirim = todayMov.filter((m) => m.type === "Kirim").reduce((s, m) => s + m.qty, 0);
   const todayChiqim = todayMov.filter((m) => m.type === "Chiqim").reduce((s, m) => s + m.qty, 0);
 
-  const totalValue = products.reduce((s, p) => s + p.stock * p.price, 0);
-  const deadStock = products.filter((p) => p.stock === 0).length;
-  const reorderList = products.filter((p) => p.stock < p.min);
+  const totalValue = stockData.reduce((s, p) => s + p.stock * p.price, 0);
+  const deadStock = stockData.filter((p) => p.stock === 0).length;
+  const reorderList = stockData.filter((p) => p.stock < p.min);
+
+  const handleTransfer = (whId: number, whName: string) => {
+    setTransferWh(whId);
+    show(`Ko'chirish boshlandi: ${whName} omboridan`);
+  };
+
+  const handleReorder = (productName: string, sku: string) => {
+    const qty = 20;
+    setStockData((prev) => prev.map((p) => p.sku === sku ? { ...p, stock: p.stock + qty } : p));
+    setMovData((prev) => [
+      { id: Date.now(), date: "17 Iyul bugun", type: "Kirim" as const, product: productName, qty, party: "Avtomatik buyurtma", person: "Tizim", doc: `KR-AUTO-${sku}` },
+      ...prev,
+    ]);
+    show(`Qayta buyurtma berildi: ${productName} (+${qty} dona)`);
+  };
 
   const tabs: { key: Tab; label: string; icon: React.ElementType }[] = [
     { key: "ombor", label: "Ombor", icon: Package },
@@ -125,6 +164,30 @@ export default function InventoryDemo() {
 
   return (
     <div className="flex flex-col gap-2.5 min-h-[520px]">
+      {/* Status bar */}
+      <div className="flex items-center justify-between px-3 py-1.5 rounded-lg bg-cyan-500/[0.07] border border-cyan-500/20 text-[9px]">
+        <div className="flex items-center gap-2">
+          <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
+          <span className="text-cyan-400 font-semibold">ZYRON Inventory v2.0</span>
+          <span className="text-gray-600">·</span>
+          <span className="text-gray-400">Markaziy ombor</span>
+        </div>
+        <div className="flex items-center gap-2 text-gray-400">
+          <span className="text-white font-medium">Jami SKU: {stockData.length}</span>
+          <span className="text-gray-600">·</span>
+          <span className="text-amber-400 font-medium">Ogohlantirish: {reorderList.length}</span>
+          <span className="text-gray-600">·</span>
+          <span className="font-mono">{clock}</span>
+        </div>
+      </div>
+
+      {/* Toast */}
+      {toast && (
+        <div className="fixed bottom-4 right-4 z-50 px-3 py-2 rounded-lg bg-cyan-500/90 text-white text-[10px] font-semibold shadow-lg">
+          {toast.msg}
+        </div>
+      )}
+
       {/* Header tabs */}
       <div className="flex items-center justify-between">
         <div className="flex gap-1.5 flex-wrap">
@@ -157,7 +220,7 @@ export default function InventoryDemo() {
           {/* Top stats */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3">
             {[
-              { label: "Jami SKU", value: products.length, color: "text-white" },
+              { label: "Jami SKU", value: stockData.length, color: "text-white" },
               { label: "Umumiy qiymat", value: fmt(totalValue), color: "text-cyan-400" },
               { label: "Kam qoldi", value: reorderList.length, color: "text-amber-400" },
               { label: "Tugagan", value: deadStock, color: "text-red-400" },
@@ -405,7 +468,7 @@ export default function InventoryDemo() {
 
                 {selectedRoute === wh.id && (
                   <button
-                    onClick={(e) => { e.stopPropagation(); setTransferWh(wh.id); }}
+                    onClick={(e) => { e.stopPropagation(); handleTransfer(wh.id, wh.name); }}
                     className="mt-2 w-full text-[9px] py-1 rounded-md bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 hover:bg-cyan-500/30 transition-colors flex items-center justify-center gap-1"
                   >
                     <ArrowRight size={9} /> Bu ombordan ko'chirish
@@ -438,7 +501,7 @@ export default function InventoryDemo() {
             {[
               { label: "Aylanma koeffitsient", value: "5.4x", color: "text-cyan-400", icon: RefreshCw },
               { label: "O'lik zaxira", value: `${deadStock} SKU`, color: "text-red-400", icon: Archive },
-              { label: "Qayta buyurtma kerak", value: `${reorderList.length} ta`, color: "text-amber-400", icon: AlertTriangle },
+              { label: "Qayta buyurtma kerak", value: `${reorderList.length} ta`, color: reorderList.length > 0 ? "text-amber-400" : "text-emerald-400", icon: AlertTriangle },
               { label: "Umumiy qiymat", value: fmt(totalValue), color: "text-emerald-400", icon: TrendingUp },
             ].map((s) => (
               <div key={s.label} className="p-2.5 rounded-lg bg-white/[0.03] border border-white/[0.06]">
@@ -519,9 +582,12 @@ export default function InventoryDemo() {
                       <p className="text-[10px] font-medium text-gray-300 truncate">{p.name}</p>
                       <p className="text-[8px] text-gray-500">{p.sku} · Qoldi: <span className={urgent ? "text-red-400 font-bold" : "text-amber-400 font-bold"}>{p.stock}</span> / Min: {p.min}</p>
                     </div>
-                    <span className={`text-[8px] px-1.5 py-0.5 rounded font-medium shrink-0 ${urgent ? "bg-red-500/15 text-red-400" : "bg-amber-500/15 text-amber-400"}`}>
-                      {urgent ? "Shoshilinch" : "Tez orada"}
-                    </span>
+                    <button
+                      onClick={() => handleReorder(p.name, p.sku)}
+                      className={`text-[8px] px-1.5 py-0.5 rounded font-medium shrink-0 transition-colors ${urgent ? "bg-red-500/15 text-red-400 hover:bg-red-500/30" : "bg-amber-500/15 text-amber-400 hover:bg-amber-500/30"}`}
+                    >
+                      {urgent ? "Buyurtma" : "Tez orada"}
+                    </button>
                     {urgent ? <TrendingDown size={10} className="text-red-400 shrink-0" /> : <TrendingDown size={10} className="text-amber-400 shrink-0" />}
                   </div>
                 );

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   ShoppingBag, ShoppingCart, Store, BarChart2,
   Star, TrendingUp, Package, Search, Filter,
@@ -89,6 +89,15 @@ export default function MarketplaceDemo() {
   const [search, setSearch]        = useState("");
   const [cart, setCart]            = useState<Set<number>>(new Set([1, 3]));
   const [expandedOrder, setExpandedOrder] = useState<string | null>(null);
+  const [orderStatuses, setOrderStatuses] = useState<Record<string, string>>(
+    Object.fromEntries(orders.map((o) => [o.id, o.status]))
+  );
+  const [cartBadgePulse, setCartBadgePulse] = useState(false);
+  const [time, setTime] = useState(new Date());
+  const [toast, setToast] = useState<string | null>(null);
+
+  useEffect(() => { const t = setInterval(() => setTime(new Date()), 60000); return () => clearInterval(t); }, []);
+  useEffect(() => { if (toast) { const t = setTimeout(() => setToast(null), 2500); return () => clearTimeout(t); } }, [toast]);
 
   const tabs = [
     { key: "showcase"  as MarketplaceTab, label: "Vitrina",    icon: ShoppingBag },
@@ -105,10 +114,31 @@ export default function MarketplaceDemo() {
   });
 
   const toggleCart = (id: number) => {
+    const product = products.find((p) => p.id === id);
     setCart((prev) => {
       const next = new Set(prev);
-      next.has(id) ? next.delete(id) : next.add(id);
+      if (next.has(id)) {
+        next.delete(id);
+        setToast(`${product?.name} savatdan olib tashlandi`);
+      } else {
+        next.add(id);
+        setToast(`${product?.name} savatga qo'shildi`);
+        setCartBadgePulse(true);
+        setTimeout(() => setCartBadgePulse(false), 600);
+      }
       return next;
+    });
+  };
+
+  const advanceOrderStatus = (orderId: string) => {
+    const statusFlow: Record<string, string> = { new: "processing", processing: "shipped", shipped: "delivered" };
+    setOrderStatuses((prev) => {
+      const next = statusFlow[prev[orderId]];
+      if (next) {
+        setToast(`${orderId} — holat: ${statusConfig[next]?.label}`);
+        return { ...prev, [orderId]: next };
+      }
+      return prev;
     });
   };
 
@@ -119,8 +149,32 @@ export default function MarketplaceDemo() {
   const gmvTotal       = weeklyGMV.reduce((s, v) => s + v, 0);
   const totalOrdersAna = orders.length;
 
+  const cartTotal = products.filter((p) => cart.has(p.id)).reduce((s, p) => s + p.price, 0);
+
   return (
-    <div className="flex flex-col gap-2.5 min-h-[520px]">
+    <div className="relative flex flex-col gap-2.5 min-h-[520px]">
+      {/* Status bar */}
+      <div className="flex items-center justify-between px-2.5 py-1.5 rounded-lg bg-white/[0.03] border border-white/[0.06]">
+        <div className="flex items-center gap-1.5">
+          <span className="w-1.5 h-1.5 rounded-full bg-violet-400 animate-pulse" />
+          <span className="text-[9px] font-semibold text-white">ZYRON Marketplace</span>
+          <span className="text-[8px] text-gray-600">v3.0</span>
+          <span className="text-[8px] text-gray-600">•</span>
+          <span className="text-[8px] text-gray-500">Admin Panel</span>
+        </div>
+        <div className="flex items-center gap-2">
+          {cart.size > 0 && (
+            <span className="text-[8px] text-violet-400 font-medium">{fmt(cartTotal)}</span>
+          )}
+          <span className="text-[8px] text-gray-500 font-mono">
+            {time.toLocaleTimeString("uz-UZ", { hour: "2-digit", minute: "2-digit" })}
+          </span>
+        </div>
+      </div>
+
+      {/* Toast */}
+      {toast && <div className="absolute bottom-3 right-3 z-50 px-3 py-1.5 rounded-lg bg-emerald-500/90 text-white text-[10px] font-medium shadow-lg">{toast}</div>}
+
       {/* Tabs */}
       <div className="flex items-center justify-between flex-wrap gap-2">
         <div className="flex gap-1.5 flex-wrap">
@@ -141,7 +195,7 @@ export default function MarketplaceDemo() {
         <div className="flex items-center gap-2 text-[9px]">
           <span className="text-emerald-400 flex items-center gap-0.5"><TrendingUp size={9} /> +24% bu hafta</span>
           {cart.size > 0 && (
-            <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-violet-500/20 border border-violet-500/30 text-violet-400">
+            <div className={`flex items-center gap-1 px-2 py-0.5 rounded-full bg-violet-500/20 border border-violet-500/30 text-violet-400 transition-transform ${cartBadgePulse ? "scale-125" : "scale-100"}`}>
               <ShoppingCart size={9} />
               <span>{cart.size}</span>
             </div>
@@ -268,7 +322,8 @@ export default function MarketplaceDemo() {
               </thead>
               <tbody>
                 {orders.map((order) => {
-                  const cfg = statusConfig[order.status];
+                  const currentStatus = orderStatuses[order.id] ?? order.status;
+                  const cfg = statusConfig[currentStatus];
                   const isExpanded = expandedOrder === order.id;
                   return (
                     <>
@@ -297,14 +352,24 @@ export default function MarketplaceDemo() {
                           <span className={`text-[7px] px-1.5 py-0.5 rounded border ${methodColor[order.method] || ""}`}>{order.method}</span>
                         </td>
                         <td className="py-2 px-2.5">
-                          <span className={`px-1.5 py-0.5 rounded text-[8px] font-medium border ${cfg.style}`}>{cfg.label}</span>
+                          <div className="flex items-center gap-1">
+                            <span className={`px-1.5 py-0.5 rounded text-[8px] font-medium border ${cfg.style}`}>{cfg.label}</span>
+                            {currentStatus !== "delivered" && currentStatus !== "cancelled" && (
+                              <button
+                                onClick={(e) => { e.stopPropagation(); advanceOrderStatus(order.id); }}
+                                className="text-[7px] px-1 py-0.5 rounded bg-white/[0.05] text-gray-500 hover:text-violet-400 hover:bg-violet-500/10 transition-colors border border-white/[0.06]"
+                              >
+                                →
+                              </button>
+                            )}
+                          </div>
                         </td>
                       </tr>
                       {isExpanded && (
                         <tr key={order.id + "-exp"} className="border-b border-white/[0.04] bg-white/[0.01]">
                           <td colSpan={7} className="px-4 pb-2.5 pt-1">
                             {/* Progress steps */}
-                            {order.status !== "cancelled" && (
+                            {currentStatus !== "cancelled" && (
                               <div className="flex items-center gap-1 mb-2">
                                 {["Yangi", "Tayyorlanmoqda", "Jo'natildi", "Yetkazildi"].map((step, si) => {
                                   const active = cfg.step > si;

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   DollarSign, Users, ShoppingCart, TrendingUp, ArrowUpRight, ArrowDownRight,
   Building2, Briefcase, Warehouse, FileText, BarChart3,
@@ -76,8 +76,41 @@ const statusColors = {
 };
 const statusLabels = { paid: "To'langan", pending: "Kutilmoqda", overdue: "Muddati o'tgan" };
 
+const deptColors = [
+  "from-blue-500 to-cyan-500", "from-purple-500 to-pink-500", "from-emerald-500 to-green-500",
+  "from-amber-500 to-orange-500", "from-red-500 to-rose-500", "from-violet-500 to-purple-500", "from-teal-500 to-cyan-500",
+];
+
 export default function ERPDemo() {
   const [tab, setTab] = useState<Tab>("dashboard");
+  const [clock, setClock] = useState(() => new Date().toLocaleTimeString("uz-UZ"));
+  const [toast, setToast] = useState<string | null>(null);
+  const [deptBudgets, setDeptBudgets] = useState(departments.map((d) => ({ name: d.name, spent: d.spent, budget: d.budget, percent: d.percent })));
+
+  useEffect(() => {
+    const t = setInterval(() => setClock(new Date().toLocaleTimeString("uz-UZ")), 1000);
+    return () => clearInterval(t);
+  }, []);
+
+  const showToast = (msg: string) => {
+    setToast(msg);
+    setTimeout(() => setToast(null), 2500);
+  };
+
+  const adjustBudget = (name: string, delta: number) => {
+    setDeptBudgets((prev) =>
+      prev.map((d) => {
+        if (d.name !== name) return d;
+        const newSpent = Math.max(0, Math.min(d.budget, d.spent + delta));
+        return { ...d, spent: newSpent, percent: Math.round((newSpent / d.budget) * 100) };
+      })
+    );
+    showToast(`Muvaffaqiyatli! ${name} byudjeti yangilandi`);
+  };
+
+  const totalSpent = deptBudgets.reduce((s, d) => s + d.spent, 0);
+  const totalBudget = deptBudgets.reduce((s, d) => s + d.budget, 0);
+
   const maxVal = Math.max(...revenueData.map((d) => d.value));
 
   const tabs: { key: Tab; label: string; icon: typeof Building2 }[] = [
@@ -89,6 +122,27 @@ export default function ERPDemo() {
 
   return (
     <div className="flex flex-col gap-3 min-h-[420px]">
+      {/* Toast */}
+      {toast && (
+        <div className="fixed top-4 right-4 z-50 px-4 py-2 rounded-lg bg-purple-500/90 text-white text-[11px] font-medium shadow-lg">
+          {toast}
+        </div>
+      )}
+
+      {/* Status Bar */}
+      <div className="flex items-center justify-between px-3 py-1.5 rounded-lg bg-white/[0.03] border border-white/[0.06]">
+        <div className="flex items-center gap-2">
+          <span className="w-1.5 h-1.5 rounded-full bg-purple-400 animate-pulse" />
+          <span className="text-[10px] font-semibold text-purple-400">ZYRON ERP v4.0</span>
+          <span className="text-[9px] text-gray-600">•</span>
+          <Building2 size={9} className="text-gray-500" />
+          <span className="text-[9px] text-gray-400">ZYRON Industries</span>
+          <span className="text-[9px] text-gray-600">•</span>
+          <span className="text-[9px] text-gray-500">Byudjet: {totalSpent}M / {totalBudget}M</span>
+        </div>
+        <span className="text-[9px] text-gray-600 font-mono">{clock}</span>
+      </div>
+
       {/* KPI Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
         {kpiCards.map((kpi) => (
@@ -157,15 +211,19 @@ export default function ERPDemo() {
             <div className="col-span-full sm:col-span-2 bg-white/[0.02] rounded-xl border border-white/[0.06] p-3">
               <p className="text-[11px] font-bold text-white mb-3">Byudjet sarfi</p>
               <div className="space-y-2.5 max-h-[160px] overflow-y-auto">
-                {departments.map((dept) => (
+                {deptBudgets.map((dept) => (
                   <div key={dept.name}>
                     <div className="flex items-center justify-between mb-1">
                       <span className="text-[10px] text-gray-300">{dept.name}</span>
-                      <span className={`text-[9px] font-medium ${
-                        dept.percent >= 90 ? "text-red-400" : dept.percent >= 80 ? "text-amber-400" : "text-emerald-400"
-                      }`}>
-                        {dept.spent}M / {dept.budget}M
-                      </span>
+                      <div className="flex items-center gap-1">
+                        <button onClick={() => adjustBudget(dept.name, -5)} className="w-3.5 h-3.5 rounded bg-white/[0.06] text-gray-400 hover:text-white text-[8px] flex items-center justify-center">-</button>
+                        <span className={`text-[9px] font-medium ${
+                          dept.percent >= 90 ? "text-red-400" : dept.percent >= 80 ? "text-amber-400" : "text-emerald-400"
+                        }`}>
+                          {dept.spent}M / {dept.budget}M
+                        </span>
+                        <button onClick={() => adjustBudget(dept.name, 5)} className="w-3.5 h-3.5 rounded bg-white/[0.06] text-gray-400 hover:text-white text-[8px] flex items-center justify-center">+</button>
+                      </div>
                     </div>
                     <div className="h-1.5 rounded-full bg-white/[0.06] overflow-hidden">
                       <div
@@ -201,7 +259,11 @@ export default function ERPDemo() {
                 </thead>
                 <tbody>
                   {recentOps.map((op) => (
-                    <tr key={op.id} className="border-b border-white/[0.03] hover:bg-white/[0.02]">
+                    <tr
+                      key={op.id}
+                      className="border-b border-white/[0.03] hover:bg-white/[0.02] cursor-pointer"
+                      onClick={() => showToast(`${op.id} — ${op.type} ko'rib chiqildi`)}
+                    >
                       <td className="py-1.5 text-purple-400 font-medium">{op.id}</td>
                       <td className="py-1.5 text-gray-400">{op.type}</td>
                       <td className="py-1.5 text-gray-300">{op.client}</td>
@@ -284,10 +346,19 @@ export default function ERPDemo() {
           <div className="bg-white/[0.02] rounded-xl border border-white/[0.06] p-3">
             <p className="text-[11px] font-bold text-white mb-2">Bo'limlar tarkibi</p>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
-              {departments.slice(0, 4).map((d) => (
-                <div key={d.name} className="p-2 rounded-lg bg-white/[0.03] border border-white/[0.06]">
-                  <p className="text-[10px] text-white font-medium">{d.name}</p>
-                  <p className="text-[9px] text-gray-500">{d.head}</p>
+              {departments.slice(0, 4).map((d, i) => (
+                <div
+                  key={d.name}
+                  className="p-2 rounded-lg bg-white/[0.03] border border-white/[0.06] hover:border-purple-500/30 cursor-pointer transition-all"
+                  onClick={() => showToast(`${d.name} bo'limi: ${d.staff} xodim`)}
+                >
+                  <div className="flex items-center gap-1.5 mb-1">
+                    <div className={`w-5 h-5 rounded-full bg-gradient-to-br ${deptColors[i]} flex items-center justify-center shrink-0`}>
+                      <span className="text-[6px] font-bold text-white">{d.head.split(" ").map((n) => n[0]).join("")}</span>
+                    </div>
+                    <p className="text-[10px] text-white font-medium">{d.name}</p>
+                  </div>
+                  <p className="text-[8px] text-gray-500">{d.head}</p>
                   <p className="text-[10px] text-purple-400 font-bold mt-1">{d.staff} nafar</p>
                 </div>
               ))}
@@ -365,6 +436,36 @@ export default function ERPDemo() {
                   <p className="text-[8px] text-gray-500">{acc.bank} · {acc.currency}</p>
                 </div>
               ))}
+            </div>
+          </div>
+
+          {/* Uzbek Tax Info */}
+          <div className="bg-white/[0.02] rounded-xl border border-white/[0.06] p-3">
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-[11px] font-bold text-white">Soliq majburiyatlari (2026)</p>
+              <button onClick={() => showToast("Soliq hisoboti tayyor!")} className="text-[8px] text-purple-400 hover:text-purple-300">Hisobot</button>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[9px]">
+              <div className="p-2 rounded-lg bg-white/[0.03] border border-white/[0.06]">
+                <p className="text-gray-500 mb-0.5">QQS (stavka)</p>
+                <p className="text-amber-400 font-bold text-[12px]">12%</p>
+                <p className="text-gray-600 text-[8px]">Qo'shilgan qiymat solig'i</p>
+              </div>
+              <div className="p-2 rounded-lg bg-white/[0.03] border border-white/[0.06]">
+                <p className="text-gray-500 mb-0.5">Foyda solig'i</p>
+                <p className="text-blue-400 font-bold text-[12px]">15%</p>
+                <p className="text-gray-600 text-[8px]">Korporativ soliq</p>
+              </div>
+              <div className="p-2 rounded-lg bg-white/[0.03] border border-white/[0.06]">
+                <p className="text-gray-500 mb-0.5">QQS summasi</p>
+                <p className="text-white font-bold text-[12px]">101.7M</p>
+                <p className="text-gray-600 text-[8px]">Iyul oyi uchun</p>
+              </div>
+              <div className="p-2 rounded-lg bg-white/[0.03] border border-white/[0.06]">
+                <p className="text-gray-500 mb-0.5">Foyda solig'i</p>
+                <p className="text-white font-bold text-[12px]">33.5M</p>
+                <p className="text-gray-600 text-[8px]">Hisoblangan</p>
+              </div>
             </div>
           </div>
 

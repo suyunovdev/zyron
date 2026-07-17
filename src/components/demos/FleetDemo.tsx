@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Truck, User, Map, Wrench, Fuel, MapPin, CheckCircle, AlertTriangle,
   Clock, Star, ChevronDown, ChevronUp, Phone, Navigation, Plus,
@@ -8,6 +8,25 @@ import {
 } from "lucide-react";
 
 type FleetTab = "transport" | "reylar" | "haydovchilar" | "texnik";
+
+type Toast = { id: number; msg: string; type: "success" | "info" | "warning" };
+function useToast() {
+  const [toasts, setToasts] = useState<Toast[]>([]);
+  const show = (msg: string, type: Toast["type"] = "success") => {
+    const id = Date.now();
+    setToasts((p) => [...p, { id, msg, type }]);
+    setTimeout(() => setToasts((p) => p.filter((t) => t.id !== id)), 2500);
+  };
+  return { toasts, show };
+}
+function useClock() {
+  const [time, setTime] = useState(() => new Date().toLocaleTimeString("uz-UZ", { hour: "2-digit", minute: "2-digit", second: "2-digit" }));
+  useEffect(() => {
+    const id = setInterval(() => setTime(new Date().toLocaleTimeString("uz-UZ", { hour: "2-digit", minute: "2-digit", second: "2-digit" })), 1000);
+    return () => clearInterval(id);
+  }, []);
+  return time;
+}
 
 function fmt(n: number) {
   return n.toLocaleString("uz-UZ") + " so'm";
@@ -79,6 +98,10 @@ export default function FleetDemo() {
   const [selectedVehicle, setSelectedVehicle] = useState<number | null>(null);
   const [selectedDriver, setSelectedDriver] = useState<number | null>(null);
   const [addingMaint, setAddingMaint] = useState(false);
+  const { toasts, show } = useToast();
+  const clock = useClock();
+  const [completedTrips, setCompletedTrips] = useState<Set<number>>(new Set([4]));
+  const [maintSaved, setMaintSaved] = useState(false);
 
   const tabs = [
     { key: "transport" as FleetTab, label: "Transport", icon: Truck },
@@ -116,8 +139,36 @@ export default function FleetDemo() {
   const driverStatusLabel = (s: string) =>
     s === "yolda" ? "Yo'lda" : s === "bosh" ? "Bo'sh" : "Ta'tilda";
 
+  const onRoadCount = vehicles.filter((v) => v.status === "harakatda").length;
+
   return (
     <div className="flex flex-col gap-2.5 min-h-[520px]">
+      {/* Toast notifications */}
+      <div className="fixed top-3 right-3 z-50 flex flex-col gap-1.5 pointer-events-none">
+        {toasts.map((t) => (
+          <div key={t.id} className={`px-3 py-2 rounded-lg text-[10px] font-medium shadow-lg border backdrop-blur-sm ${
+            t.type === "success" ? "bg-emerald-900/90 text-emerald-300 border-emerald-500/40"
+            : t.type === "warning" ? "bg-amber-900/90 text-amber-300 border-amber-500/40"
+            : "bg-blue-900/90 text-blue-300 border-blue-500/40"
+          }`}>{t.msg}</div>
+        ))}
+      </div>
+
+      {/* Status bar */}
+      <div className="flex items-center justify-between px-3 py-1.5 rounded-lg bg-orange-500/[0.06] border border-orange-500/15">
+        <div className="flex items-center gap-2">
+          <span className="w-1.5 h-1.5 rounded-full bg-orange-400 animate-pulse flex-shrink-0" />
+          <span className="text-[9px] font-medium text-orange-400">ZYRON Fleet v2.0</span>
+          <span className="text-[9px] text-gray-600">•</span>
+          <span className="text-[9px] text-gray-500">TransLogistics UZ</span>
+        </div>
+        <div className="flex items-center gap-2 text-[9px] text-gray-500">
+          <span className="text-emerald-400 font-medium">Yo'ldagi transport: {onRoadCount}</span>
+          <span className="text-gray-700">|</span>
+          <span className="font-mono text-gray-400">{clock}</span>
+        </div>
+      </div>
+
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex gap-1.5 flex-wrap">
@@ -298,9 +349,19 @@ export default function FleetDemo() {
                     <td className="py-2 px-2.5 text-right text-gray-400">{t.dist} km</td>
                     <td className="py-2 px-2.5 text-gray-500">{t.cargo}</td>
                     <td className="py-2 px-2.5">
-                      <span className={`px-1.5 py-0.5 rounded text-[7px] font-medium ${tripStatusBadge(t.status)}`}>
-                        {tripStatusLabel(t.status)}
-                      </span>
+                      <div className="flex items-center gap-1.5">
+                        <span className={`px-1.5 py-0.5 rounded text-[7px] font-medium ${completedTrips.has(t.id) ? "bg-emerald-500/15 text-emerald-400" : tripStatusBadge(t.status)}`}>
+                          {completedTrips.has(t.id) ? "Yetdi" : tripStatusLabel(t.status)}
+                        </span>
+                        {!completedTrips.has(t.id) && t.status === "yolda" && (
+                          <button
+                            onClick={() => { setCompletedTrips((p) => new Set([...p, t.id])); show(`${t.from}→${t.to} reyi yakunlandi`, "success"); }}
+                            className="px-1 py-0.5 rounded bg-emerald-500/10 text-emerald-400 text-[7px] hover:bg-emerald-500/20 transition-colors"
+                          >
+                            Yakunlash
+                          </button>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -442,7 +503,7 @@ export default function FleetDemo() {
                 ))}
               </div>
               <button
-                onClick={() => setAddingMaint(false)}
+                onClick={() => { setAddingMaint(false); setMaintSaved(true); show("Texnik yozuv saqlandi", "success"); setTimeout(() => setMaintSaved(false), 3000); }}
                 className="mt-2 w-full py-1.5 rounded-lg bg-orange-500/20 border border-orange-500/30 text-orange-400 text-[9px] font-medium hover:bg-orange-500/30 transition-colors"
               >
                 Saqlash

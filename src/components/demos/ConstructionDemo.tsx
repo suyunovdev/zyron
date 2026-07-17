@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   HardHat, Calendar, Users, DollarSign, CheckCircle, Clock, AlertTriangle,
   ChevronDown, ChevronUp, TrendingUp, TrendingDown, Package, Cpu,
@@ -8,6 +8,25 @@ import {
 } from "lucide-react";
 
 type CTab = "loyihalar" | "jadval" | "resurslar" | "byudjet";
+
+type Toast = { id: number; msg: string; type: "success" | "info" | "warning" };
+function useToast() {
+  const [toasts, setToasts] = useState<Toast[]>([]);
+  const show = (msg: string, type: Toast["type"] = "success") => {
+    const id = Date.now();
+    setToasts((p) => [...p, { id, msg, type }]);
+    setTimeout(() => setToasts((p) => p.filter((t) => t.id !== id)), 2500);
+  };
+  return { toasts, show };
+}
+function useClock() {
+  const [time, setTime] = useState(() => new Date().toLocaleTimeString("uz-UZ", { hour: "2-digit", minute: "2-digit", second: "2-digit" }));
+  useEffect(() => {
+    const id = setInterval(() => setTime(new Date().toLocaleTimeString("uz-UZ", { hour: "2-digit", minute: "2-digit", second: "2-digit" })), 1000);
+    return () => clearInterval(id);
+  }, []);
+  return time;
+}
 
 function fmt(n: number) {
   return n.toLocaleString("uz-UZ") + " so'm";
@@ -115,6 +134,10 @@ const invoices = [
 export default function ConstructionDemo() {
   const [tab, setTab] = useState<CTab>("loyihalar");
   const [expanded, setExpanded] = useState<number | null>(null);
+  const { toasts, show } = useToast();
+  const clock = useClock();
+  const [completedTasks, setCompletedTasks] = useState<Set<number>>(new Set([1, 2]));
+  const [projectProgresses, setProjectProgresses] = useState<Record<number, number>>({ 1: 72, 2: 45, 3: 5, 4: 100 });
 
   const tabs = [
     { key: "loyihalar" as CTab, label: "Loyihalar", icon: HardHat },
@@ -147,8 +170,37 @@ export default function ConstructionDemo() {
   const totalBudget = projects.reduce((s, p) => s + p.budget, 0);
   const totalSpent = projects.reduce((s, p) => s + p.spent, 0);
 
+  const activeCount = projects.filter((p) => p.status === "faol").length;
+  const avgProgress = Math.round(Object.values(projectProgresses).filter((_, i) => projects[i]?.status === "faol").reduce((a, b) => a + b, 0) / activeCount);
+
   return (
     <div className="flex flex-col gap-2.5 min-h-[520px]">
+      {/* Toast notifications */}
+      <div className="fixed top-3 right-3 z-50 flex flex-col gap-1.5 pointer-events-none">
+        {toasts.map((t) => (
+          <div key={t.id} className={`px-3 py-2 rounded-lg text-[10px] font-medium shadow-lg border backdrop-blur-sm ${
+            t.type === "success" ? "bg-emerald-900/90 text-emerald-300 border-emerald-500/40"
+            : t.type === "warning" ? "bg-amber-900/90 text-amber-300 border-amber-500/40"
+            : "bg-blue-900/90 text-blue-300 border-blue-500/40"
+          }`}>{t.msg}</div>
+        ))}
+      </div>
+
+      {/* Status bar */}
+      <div className="flex items-center justify-between px-3 py-1.5 rounded-lg bg-amber-500/[0.06] border border-amber-500/15">
+        <div className="flex items-center gap-2">
+          <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse flex-shrink-0" />
+          <span className="text-[9px] font-medium text-amber-400">ZYRON Construction v1.8</span>
+          <span className="text-[9px] text-gray-600">•</span>
+          <span className="text-[9px] text-gray-500">Qurilish boshqarmasi</span>
+        </div>
+        <div className="flex items-center gap-2 text-[9px] text-gray-500">
+          <span>{activeCount} faol loyiha · o'rtacha <span className="text-amber-400 font-medium">{avgProgress}%</span></span>
+          <span className="text-gray-700">|</span>
+          <span className="font-mono text-gray-400">{clock}</span>
+        </div>
+      </div>
+
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex gap-1.5 flex-wrap">
@@ -168,7 +220,7 @@ export default function ConstructionDemo() {
         </div>
         <div className="flex items-center gap-1.5 text-[9px] text-gray-500">
           <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
-          <span>{projects.filter((p) => p.status === "faol").length} faol loyiha</span>
+          <span>{activeCount} faol loyiha</span>
         </div>
       </div>
 
@@ -308,10 +360,19 @@ export default function ConstructionDemo() {
               <div key={task.id} className={`flex border-b border-white/[0.04] hover:bg-white/[0.02] ${task.overdue ? "bg-amber-500/[0.03]" : ""}`}>
                 <div className="w-36 flex-shrink-0 py-2 px-2.5 flex items-center gap-1.5">
                   {task.overdue && <AlertTriangle size={8} className="text-amber-400 flex-shrink-0" />}
-                  <div>
+                  <div className="flex-1 min-w-0">
                     <p className="text-[9px] text-gray-300 leading-tight">{task.name}</p>
                     <p className="text-[7px] text-gray-600">{task.project}</p>
                   </div>
+                  {task.progress > 0 && task.progress < 100 && !completedTasks.has(task.id) && (
+                    <button
+                      onClick={() => { setCompletedTasks((p) => new Set([...p, task.id])); show(`"${task.name}" vazifasi bajarildi!`, "success"); }}
+                      className="flex-shrink-0 px-1 py-0.5 rounded bg-emerald-500/10 text-emerald-400 text-[6px] hover:bg-emerald-500/20 transition-colors"
+                    >
+                      ✓
+                    </button>
+                  )}
+                  {completedTasks.has(task.id) && <CheckCircle size={8} className="text-emerald-400 flex-shrink-0" />}
                 </div>
                 <div className="flex-1 relative py-2.5 flex items-center">
                   {/* Background cells */}
