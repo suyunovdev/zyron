@@ -5,13 +5,24 @@ import { useRef, useState } from "react";
 import {
   Monitor, UtensilsCrossed, ShoppingBag, Building2,
   Users, Brain, Cloud, BarChart3, ArrowRight,
+  UserCog, Receipt, Truck, GraduationCap, CalendarCheck,
+  Store, Package, HeartPulse, Hotel, Sprout, CarFront,
+  HardHat, Bot, AppWindow, Smartphone,
 } from "lucide-react";
 import { useLanguage } from "@/lib/LanguageContext";
 import { translations, t } from "@/lib/translations";
 import ProductModal from "./ProductModal";
 
-const icons = [Monitor, UtensilsCrossed, ShoppingBag, Building2, Users, Brain, Cloud, BarChart3];
-const keys = ["pos", "restaurant", "retail", "erp", "crm", "ai", "cloud", "analytics"] as const;
+const icons = [
+  Monitor, UtensilsCrossed, ShoppingBag, Building2, Users, Brain, Cloud, BarChart3,
+  UserCog, Receipt, Truck, GraduationCap, CalendarCheck, Store, Package,
+  HeartPulse, Hotel, Sprout, CarFront, HardHat, Bot, AppWindow, Smartphone,
+];
+const keys = [
+  "pos", "restaurant", "retail", "erp", "crm", "ai", "cloud", "analytics",
+  "hrm", "billing", "logistics", "education", "booking", "marketplace", "inventory",
+  "medical", "hotel", "farm", "fleet", "construction", "tgbot", "miniapp", "mobileapp",
+] as const;
 const colors = [
   "from-blue-500 to-blue-600",
   "from-orange-500 to-red-500",
@@ -21,6 +32,21 @@ const colors = [
   "from-cyan-500 to-blue-500",
   "from-sky-500 to-indigo-500",
   "from-amber-500 to-yellow-500",
+  "from-teal-500 to-emerald-500",
+  "from-lime-500 to-green-500",
+  "from-indigo-500 to-blue-500",
+  "from-violet-500 to-purple-500",
+  "from-rose-500 to-pink-500",
+  "from-fuchsia-500 to-purple-500",
+  "from-cyan-500 to-teal-500",
+  "from-red-500 to-rose-500",
+  "from-amber-500 to-orange-500",
+  "from-green-500 to-lime-500",
+  "from-orange-500 to-amber-500",
+  "from-yellow-500 to-orange-500",
+  "from-sky-500 to-cyan-500",
+  "from-emerald-500 to-teal-500",
+  "from-violet-500 to-indigo-500",
 ];
 
 type ProductKey = (typeof keys)[number];

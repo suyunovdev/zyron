@@ -23,6 +23,21 @@ const colorMap: Record<ProductKey, string> = {
   ai: "from-cyan-500 to-blue-500",
   cloud: "from-sky-500 to-indigo-500",
   analytics: "from-amber-500 to-yellow-500",
+  hrm: "from-teal-500 to-emerald-500",
+  billing: "from-lime-500 to-green-500",
+  logistics: "from-indigo-500 to-blue-500",
+  education: "from-violet-500 to-purple-500",
+  booking: "from-rose-500 to-pink-500",
+  marketplace: "from-fuchsia-500 to-purple-500",
+  inventory: "from-cyan-500 to-teal-500",
+  medical: "from-red-500 to-rose-500",
+  hotel: "from-amber-500 to-orange-500",
+  farm: "from-green-500 to-lime-500",
+  fleet: "from-orange-500 to-amber-500",
+  construction: "from-yellow-500 to-orange-500",
+  tgbot: "from-sky-500 to-cyan-500",
+  miniapp: "from-emerald-500 to-teal-500",
+  mobileapp: "from-violet-500 to-indigo-500",
 };
 
 const demoComponents: Record<ProductKey, React.ComponentType> = {
@@ -34,6 +49,21 @@ const demoComponents: Record<ProductKey, React.ComponentType> = {
   ai: dynamic(() => import("@/components/demos/AIDemo"), { ssr: false }),
   cloud: dynamic(() => import("@/components/demos/CloudDemo"), { ssr: false }),
   analytics: dynamic(() => import("@/components/demos/AnalyticsDemo"), { ssr: false }),
+  hrm: dynamic(() => import("@/components/demos/HRMDemo"), { ssr: false }),
+  billing: dynamic(() => import("@/components/demos/BillingDemo"), { ssr: false }),
+  logistics: dynamic(() => import("@/components/demos/LogisticsDemo"), { ssr: false }),
+  education: dynamic(() => import("@/components/demos/EducationDemo"), { ssr: false }),
+  booking: dynamic(() => import("@/components/demos/BookingDemo"), { ssr: false }),
+  marketplace: dynamic(() => import("@/components/demos/MarketplaceDemo"), { ssr: false }),
+  inventory: dynamic(() => import("@/components/demos/InventoryDemo"), { ssr: false }),
+  medical: dynamic(() => import("@/components/demos/MedicalDemo"), { ssr: false }),
+  hotel: dynamic(() => import("@/components/demos/HotelDemo"), { ssr: false }),
+  farm: dynamic(() => import("@/components/demos/FarmDemo"), { ssr: false }),
+  fleet: dynamic(() => import("@/components/demos/FleetDemo"), { ssr: false }),
+  construction: dynamic(() => import("@/components/demos/ConstructionDemo"), { ssr: false }),
+  tgbot: dynamic(() => import("@/components/demos/TGBotDemo"), { ssr: false }),
+  miniapp: dynamic(() => import("@/components/demos/MiniAppDemo"), { ssr: false }),
+  mobileapp: dynamic(() => import("@/components/demos/MobileAppDemo"), { ssr: false }),
 };
 
 export default function ProductModal({ productKey, onClose }: ProductModalProps) {

@@ -304,6 +304,366 @@ export const translations = {
           ru: ["Конструктор дашбордов", "Отслеживание KPI в реальном времени", "Автоматические плановые отчёты", "Визуализация данных", "Экспорт в PDF/Excel/CSV", "Сравнительный анализ", "Шаринг и права доступа для команды", "API-коннекторы данных"],
         },
       },
+      hrm: {
+        name: "ZYRON HRM",
+        tagline: { en: "Human Resource Management System", uz: "Kadrlar boshqaruvi tizimi", ru: "Система управления персоналом" },
+        desc: {
+          en: "Streamline HR operations with smart payroll, attendance tracking, leave management, and digital contracts.",
+          uz: "Aqlli ish haqi, davomat kuzatuvi, ta'til boshqaruvi va raqamli shartnomalar bilan HR jarayonlarini soddalashtiring.",
+          ru: "Оптимизируйте HR-процессы с умным расчётом зарплат, учётом посещаемости, управлением отпусками и цифровыми договорами.",
+        },
+        features: {
+          en: ["Payroll Automation", "Attendance Tracking", "Leave Management"],
+          uz: ["Ish haqini avtomatlashtirish", "Davomat kuzatuvi", "Ta'til boshqaruvi"],
+          ru: ["Автоматизация зарплат", "Учёт посещаемости", "Управление отпусками"],
+        },
+        fullDesc: {
+          en: "ZYRON HRM is a comprehensive human resource management platform that automates every HR workflow — from onboarding and payroll to performance reviews and contract management. Empower your HR team to focus on people, not paperwork.",
+          uz: "ZYRON HRM — ishga qabul qilishdan tortib ish haqi hisoblash, ish faoliyatini baholash va shartnomalarni boshqarishgacha barcha HR jarayonlarini avtomatlashtiradigan keng qamrovli kadrlar boshqaruvi platformasi. HR jamoangizni hujjatbozlik emas, odamlar bilan shug'ullanishga yo'naltiring.",
+          ru: "ZYRON HRM — комплексная платформа управления персоналом, которая автоматизирует все HR-процессы: от найма и расчёта зарплат до оценки эффективности и управления договорами. Освободите HR-команду от бумажной работы, чтобы она занималась людьми.",
+        },
+        modalFeatures: {
+          en: ["Automated payroll calculation", "Biometric attendance integration", "Leave & holiday management", "Digital contract signing", "Employee self-service portal", "Performance review system", "Recruitment & onboarding", "HR analytics dashboard"],
+          uz: ["Avtomatik ish haqi hisoblash", "Biometrik davomat integratsiyasi", "Ta'til va dam olish boshqaruvi", "Raqamli shartnoma imzolash", "Xodim o'z-o'ziga xizmat portali", "Ish faoliyatini baholash tizimi", "Ishga qabul va onboarding", "HR analitika paneli"],
+          ru: ["Автоматический расчёт зарплат", "Интеграция биометрической посещаемости", "Управление отпусками и праздниками", "Цифровое подписание договоров", "Портал самообслуживания сотрудников", "Система оценки эффективности", "Подбор персонала и адаптация", "HR-аналитика"],
+        },
+      },
+      billing: {
+        name: "ZYRON Billing",
+        tagline: { en: "Invoice & Payment Management System", uz: "Hisob-faktura va to'lov boshqaruvi", ru: "Система выставления счетов и платежей" },
+        desc: {
+          en: "Manage invoices, automate payments, and integrate seamlessly with Payme, Click, and Uzum payment gateways.",
+          uz: "Hisob-fakturalarni boshqaring, to'lovlarni avtomatlashtiring va Payme, Click, Uzum to'lov tizimlari bilan muammosiz integratsiya qiling.",
+          ru: "Управляйте счетами, автоматизируйте платежи и легко интегрируйтесь с платёжными системами Payme, Click и Uzum.",
+        },
+        features: {
+          en: ["Invoice Automation", "Payme & Click Integration", "Payment Tracking"],
+          uz: ["Hisob-fakturani avtomatlashtirish", "Payme va Click integratsiyasi", "To'lovlarni kuzatish"],
+          ru: ["Автоматизация счетов", "Интеграция Payme и Click", "Отслеживание платежей"],
+        },
+        fullDesc: {
+          en: "ZYRON Billing simplifies your entire financial billing cycle. Create professional invoices, automate recurring payments, and accept online payments via Payme, Click, and Uzum. Get a full picture of your cash flow with real-time financial reporting.",
+          uz: "ZYRON Billing moliyaviy hisob-faktura siklini to'liq soddalashtiradi. Professional hisob-fakturalar yarating, muntazam to'lovlarni avtomatlashtiring va Payme, Click, Uzum orqali onlayn to'lovlarni qabul qiling. Real vaqtdagi moliyaviy hisobotlar bilan pul oqimingizni to'liq nazorat qiling.",
+          ru: "ZYRON Billing упрощает весь цикл финансовых расчётов. Создавайте профессиональные счета, автоматизируйте регулярные платежи и принимайте онлайн-оплату через Payme, Click и Uzum. Контролируйте денежный поток в режиме реального времени.",
+        },
+        modalFeatures: {
+          en: ["Professional invoice generation", "Payme / Click / Uzum integration", "Recurring billing automation", "Payment reminders & notifications", "Multi-currency support", "Tax calculation & reporting", "Client payment portal", "Cash flow analytics"],
+          uz: ["Professional hisob-faktura yaratish", "Payme / Click / Uzum integratsiyasi", "Muntazam hisob-fakturani avtomatlashtirish", "To'lov eslatmalari va bildirishnomalar", "Ko'p valyutani qo'llab-quvvatlash", "Soliq hisoblash va hisobot", "Mijoz to'lov portali", "Pul oqimi analitikasi"],
+          ru: ["Генерация профессиональных счетов", "Интеграция Payme / Click / Uzum", "Автоматизация регулярных платежей", "Напоминания и уведомления об оплате", "Мультивалютная поддержка", "Расчёт налогов и отчётность", "Клиентский платёжный портал", "Аналитика денежного потока"],
+        },
+      },
+      logistics: {
+        name: "ZYRON Logistics",
+        tagline: { en: "Delivery & Logistics Management", uz: "Yetkazib berish va logistika boshqaruvi", ru: "Управление доставкой и логистикой" },
+        desc: {
+          en: "Optimize delivery routes, track couriers in real time, and manage your entire logistics chain from one platform.",
+          uz: "Yetkazib berish marshrutlarini optimallashtiring, kuryer harakatini real vaqtda kuzating va butun logistika zanjirini bitta platformadan boshqaring.",
+          ru: "Оптимизируйте маршруты доставки, отслеживайте курьеров в реальном времени и управляйте всей логистической цепочкой с одной платформы.",
+        },
+        features: {
+          en: ["Route Optimization", "Courier Tracking", "Delivery Analytics"],
+          uz: ["Marshrut optimizatsiyasi", "Kuryer kuzatuvi", "Yetkazib berish analitikasi"],
+          ru: ["Оптимизация маршрутов", "Отслеживание курьеров", "Аналитика доставки"],
+        },
+        fullDesc: {
+          en: "ZYRON Logistics is a powerful end-to-end logistics platform that helps businesses manage deliveries with precision. From intelligent route planning and real-time courier GPS tracking to automated dispatch and customer delivery notifications — everything you need to run a modern delivery operation.",
+          uz: "ZYRON Logistics — yetkazib berishni aniq boshqarish uchun kuchli platforma. Aqlli marshrut rejalashtirish va real vaqtdagi kuryer GPS kuzatuvidan tortib avtomatik dispetcherlik va mijozlarga yetkazib berish bildirishnomalarigacha — zamonaviy yetkazib berish xizmatini yuritish uchun kerak bo'lgan hamma narsa.",
+          ru: "ZYRON Logistics — мощная платформа для управления доставкой. От интеллектуального планирования маршрутов и GPS-трекинга курьеров в реальном времени до автоматической диспетчеризации и уведомлений для клиентов — всё для современной службы доставки.",
+        },
+        modalFeatures: {
+          en: ["Intelligent route optimization", "Real-time GPS courier tracking", "Automated order dispatching", "Customer delivery notifications", "Proof of delivery (e-signature)", "Multi-zone delivery management", "Driver performance analytics", "Integration with e-commerce platforms"],
+          uz: ["Aqlli marshrut optimizatsiyasi", "Real vaqtda GPS kuryer kuzatuvi", "Avtomatik buyurtma dispetcherligi", "Mijozlarga yetkazib berish bildirishnomalari", "Yetkazib berishni tasdiqlash (elektron imzo)", "Ko'p zonali yetkazib berishni boshqarish", "Haydovchi samaradorligi analitikasi", "E-tijorat platformalari bilan integratsiya"],
+          ru: ["Интеллектуальная оптимизация маршрутов", "GPS-трекинг курьеров в реальном времени", "Автоматическая диспетчеризация заказов", "Уведомления о доставке для клиентов", "Подтверждение доставки (электронная подпись)", "Управление многозональной доставкой", "Аналитика эффективности водителей", "Интеграция с e-commerce платформами"],
+        },
+      },
+      education: {
+        name: "ZYRON Education",
+        tagline: { en: "Learning Center Management Platform", uz: "O'quv markaz boshqaruvi platformasi", ru: "Платформа управления учебным центром" },
+        desc: {
+          en: "Manage students, tuition payments, class schedules, and teacher performance all in one powerful platform.",
+          uz: "Talabalar, to'lovlar, dars jadvali va o'qituvchilar samaradorligini bitta kuchli platformada boshqaring.",
+          ru: "Управляйте студентами, оплатой обучения, расписанием и эффективностью преподавателей в единой мощной платформе.",
+        },
+        features: {
+          en: ["Student Management", "Payment Tracking", "Schedule Builder"],
+          uz: ["Talabalarni boshqarish", "To'lovlarni kuzatish", "Jadval tuzish"],
+          ru: ["Управление студентами", "Отслеживание платежей", "Составление расписания"],
+        },
+        fullDesc: {
+          en: "ZYRON Education is built specifically for educational institutions, training centers, and online learning platforms. Effortlessly manage student enrollment, track tuition payments, build class schedules, and monitor teacher and student performance — all from a clean, intuitive dashboard.",
+          uz: "ZYRON Education ta'lim muassasalari, o'quv markazlari va onlayn ta'lim platformalari uchun maxsus yaratilgan. Talabalarni ro'yxatga olishni boshqaring, to'lovlarni kuzating, dars jadvallarini tuzing va o'qituvchi hamda talabalar samaradorligini nazorat qiling — barchasi qulay panel orqali.",
+          ru: "ZYRON Education создан специально для образовательных учреждений, учебных центров и онлайн-платформ. Легко управляйте записью студентов, следите за оплатой, составляйте расписание и отслеживайте успеваемость через удобную панель.",
+        },
+        modalFeatures: {
+          en: ["Student enrollment & profiles", "Tuition payment tracking", "Class schedule builder", "Teacher management", "Attendance monitoring", "Grade & progress tracking", "Parent notification system", "Course & curriculum management"],
+          uz: ["Talabalarni ro'yxatga olish va profillari", "O'qish to'lovlarini kuzatish", "Dars jadvali tuzish", "O'qituvchilarni boshqarish", "Davomat kuzatuvi", "Baho va rivojlanishni kuzatish", "Ota-onalarga bildirishnoma tizimi", "Kurs va o'quv dasturini boshqarish"],
+          ru: ["Запись студентов и профили", "Отслеживание оплаты обучения", "Конструктор расписания", "Управление преподавателями", "Контроль посещаемости", "Оценки и мониторинг прогресса", "Система уведомлений для родителей", "Управление курсами и учебными программами"],
+        },
+      },
+      booking: {
+        name: "ZYRON Booking",
+        tagline: { en: "Online Reservation & Booking System", uz: "Online bron va uchrashuv tizimi", ru: "Система онлайн-бронирования" },
+        desc: {
+          en: "Accept online bookings 24/7 for barbershops, clinics, gyms, and any appointment-based business.",
+          uz: "Sartaroshxona, klinika, sport zal va boshqa xizmat bizneslari uchun 24/7 online bron qabul qiling.",
+          ru: "Принимайте онлайн-бронирования 24/7 для парикмахерских, клиник, спортзалов и любого бизнеса по записи.",
+        },
+        features: {
+          en: ["24/7 Online Booking", "Staff Scheduling", "Reminder Notifications"],
+          uz: ["24/7 Online bron", "Xodim jadvalini boshqarish", "Eslatma bildirishnomalari"],
+          ru: ["Онлайн-бронирование 24/7", "Управление расписанием персонала", "Напоминания и уведомления"],
+        },
+        fullDesc: {
+          en: "ZYRON Booking transforms how service businesses manage appointments. Let clients book online at any time, automate reminders to reduce no-shows, manage staff schedules, and track business performance — all through a beautifully designed platform that works for barbershops, medical clinics, fitness studios, and more.",
+          uz: "ZYRON Booking xizmat bizneslarining uchrashuvlarni boshqarish usulini o'zgartiradi. Mijozlarga istalgan vaqtda online bron qilish imkonini bering, kelmay qolishlarni kamaytirish uchun eslatmalarni avtomatlashtiring, xodim jadvallarini boshqaring va biznes samaradorligini kuzating.",
+          ru: "ZYRON Booking меняет подход к управлению записями для сервисного бизнеса. Позвольте клиентам бронировать онлайн в любое время, автоматизируйте напоминания для снижения пропусков, управляйте расписанием персонала и отслеживайте эффективность бизнеса.",
+        },
+        modalFeatures: {
+          en: ["Online booking widget", "Staff calendar management", "Automated SMS/email reminders", "No-show & cancellation tracking", "Service & pricing catalog", "Client history & notes", "Multi-location support", "Booking analytics & reports"],
+          uz: ["Online bron vidjet", "Xodim kalendarini boshqarish", "Avtomatik SMS/email eslatmalar", "Kelmay qolish va bekor qilishlarni kuzatish", "Xizmat va narx katalogi", "Mijoz tarixi va eslatmalari", "Ko'p filial qo'llab-quvvatlash", "Bron analitikasi va hisobotlari"],
+          ru: ["Виджет онлайн-бронирования", "Управление календарём персонала", "Автоматические SMS/email-напоминания", "Учёт неявок и отмен", "Каталог услуг и цен", "История клиента и заметки", "Поддержка нескольких локаций", "Аналитика и отчёты по бронированиям"],
+        },
+      },
+      marketplace: {
+        name: "ZYRON Marketplace",
+        tagline: { en: "B2B & B2C Online Marketplace Builder", uz: "B2B va B2C online savdo platformasi", ru: "Конструктор B2B и B2C маркетплейса" },
+        desc: {
+          en: "Launch your own online marketplace quickly — connect buyers and sellers in a powerful B2B or B2C platform.",
+          uz: "O'zingizning online savdo platformangizni tez ishga tushiring — xaridor va sotuvchilarni kuchli B2B yoki B2C platformasida birlashtiring.",
+          ru: "Быстро запустите собственный маркетплейс — объедините покупателей и продавцов на мощной платформе B2B или B2C.",
+        },
+        features: {
+          en: ["Vendor Management", "Commission System", "Multi-store Catalog"],
+          uz: ["Sotuvchilarni boshqarish", "Komissiya tizimi", "Ko'p do'kon katalogi"],
+          ru: ["Управление продавцами", "Система комиссий", "Мульти-магазинный каталог"],
+        },
+        fullDesc: {
+          en: "ZYRON Marketplace gives you everything you need to build and run a thriving online marketplace. Onboard multiple vendors, manage product listings, handle commissions, and provide buyers with a seamless shopping experience — whether you are building a local B2B platform or a nationwide B2C marketplace.",
+          uz: "ZYRON Marketplace sizga rivojlanayotgan online savdo platformasini yaratish va boshqarish uchun kerak bo'lgan hamma narsani taqdim etadi. Ko'plab sotuvchilarni ulang, mahsulot ro'yxatlarini boshqaring, komissiyalarni hisoblab boring va xaridorlarga qulay xarid tajribasini yarating.",
+          ru: "ZYRON Marketplace предоставляет всё необходимое для создания и управления успешным онлайн-маркетплейсом. Подключайте продавцов, управляйте каталогом товаров, рассчитывайте комиссии и обеспечивайте покупателям удобный опыт шопинга.",
+        },
+        modalFeatures: {
+          en: ["Multi-vendor onboarding", "Product catalog management", "Commission & fee management", "Secure payment processing", "Order & dispute management", "Seller performance dashboards", "Buyer reviews & ratings", "SEO-optimized storefronts"],
+          uz: ["Ko'p sotuvchini ulash", "Mahsulot katalogini boshqarish", "Komissiya va to'lovlarni boshqarish", "Xavfsiz to'lovlarni qayta ishlash", "Buyurtma va nizolarni boshqarish", "Sotuvchi samaradorlik paneli", "Xaridor sharhlari va reytinglari", "SEO-optimallashtirilgan do'kon sahifalari"],
+          ru: ["Подключение множества продавцов", "Управление каталогом товаров", "Управление комиссиями и сборами", "Безопасная обработка платежей", "Управление заказами и спорами", "Дашборды эффективности продавцов", "Отзывы и рейтинги покупателей", "SEO-оптимизированные витрины"],
+        },
+      },
+      inventory: {
+        name: "ZYRON Inventory",
+        tagline: { en: "Multi-branch Warehouse Management", uz: "Ko'p filial ombor boshqaruvi", ru: "Управление складом для нескольких филиалов" },
+        desc: {
+          en: "Control stock across multiple warehouses with QR and barcode scanning, automated alerts, and real-time sync.",
+          uz: "QR va shtrix-kod skanerlash, avtomatik ogohlantirishlar va real vaqtdagi sinxronlash bilan bir nechta omborlardagi tovarlarni nazorat qiling.",
+          ru: "Контролируйте запасы в нескольких складах с QR/штрих-кодами, автоматическими уведомлениями и синхронизацией в реальном времени.",
+        },
+        features: {
+          en: ["QR & Barcode Scanning", "Multi-warehouse Sync", "Low Stock Alerts"],
+          uz: ["QR va shtrix-kod skanerlash", "Ko'p ombor sinxronlash", "Kam qoldiq ogohlantirishlari"],
+          ru: ["QR и штрих-код сканирование", "Синхронизация нескольких складов", "Оповещения о низком запасе"],
+        },
+        fullDesc: {
+          en: "ZYRON Inventory delivers precise, real-time stock control across multiple warehouses and branches. Use QR codes or barcodes to receive, transfer, and dispatch goods. Get automatic low-stock alerts, manage suppliers, and generate detailed inventory reports — eliminating costly stockouts and overstocking.",
+          uz: "ZYRON Inventory bir nechta ombor va filiallar bo'yicha aniq, real vaqtdagi tovar nazoratini ta'minlaydi. Tovarlarni qabul qilish, ko'chirish va jo'natish uchun QR kodlar yoki shtrix-kodlardan foydalaning. Avtomatik kam qoldiq ogohlantirishlari, yetkazib beruvchilarni boshqarish va batafsil hisobotlar.",
+          ru: "ZYRON Inventory обеспечивает точный контроль запасов в реальном времени по нескольким складам и филиалам. Используйте QR-коды или штрих-коды для приёма, перемещения и отгрузки товаров. Автоматические уведомления о низком запасе, управление поставщиками и детальные отчёты.",
+        },
+        modalFeatures: {
+          en: ["QR & barcode scanning", "Multi-warehouse management", "Real-time stock tracking", "Automated low-stock alerts", "Goods transfer between branches", "Supplier & purchase order management", "Inventory valuation reports", "Expiry date tracking"],
+          uz: ["QR va shtrix-kod skanerlash", "Ko'p ombor boshqaruvi", "Real vaqtda tovar kuzatuvi", "Avtomatik kam qoldiq ogohlantirishlari", "Filiallar orasida tovar ko'chirish", "Yetkazib beruvchi va xarid buyurtmalarini boshqarish", "Ombor qiymatlash hisobotlari", "Yaroqlilik muddatini kuzatish"],
+          ru: ["QR и штрих-код сканирование", "Управление несколькими складами", "Отслеживание запасов в реальном времени", "Автоматические уведомления о низком запасе", "Перемещение товаров между филиалами", "Управление поставщиками и заказами", "Отчёты по оценке запасов", "Отслеживание сроков годности"],
+        },
+      },
+      medical: {
+        name: "ZYRON Medical",
+        tagline: { en: "Clinic & Hospital Management Platform", uz: "Klinika va kasalxona boshqaruvi platformasi", ru: "Платформа управления клиникой и больницей" },
+        desc: {
+          en: "Digitize your clinic with patient records, appointment scheduling, prescription management, and billing.",
+          uz: "Bemorlar kartotekasi, qabul jadvali, retseptlar boshqaruvi va hisob-faktura bilan klinikangizni raqamlashtiring.",
+          ru: "Оцифруйте клинику с картотекой пациентов, расписанием приёмов, управлением рецептами и выставлением счетов.",
+        },
+        features: {
+          en: ["Patient Records (EMR)", "Appointment Scheduling", "Prescription Management"],
+          uz: ["Bemor kartalari (EMR)", "Qabul jadvali", "Retseptlarni boshqarish"],
+          ru: ["Карты пациентов (ЭМК)", "Расписание приёмов", "Управление рецептами"],
+        },
+        fullDesc: {
+          en: "ZYRON Medical is a full-featured clinic management system that helps healthcare providers deliver better care and run more efficient operations. Maintain complete electronic medical records, manage doctor appointments, issue digital prescriptions, handle billing, and generate clinical reports — all in a secure, HIPAA-ready platform.",
+          uz: "ZYRON Medical sog'liqni saqlash muassasalariga yaxshiroq xizmat ko'rsatish va samaraliroq ishlash imkonini beruvchi to'liq klinika boshqaruvi tizimi. To'liq elektron tibbiy kartotekani saqlang, shifokor qabullarini boshqaring, raqamli retseptlar bering, hisob-fakturalarni boshqaring va klinik hisobotlar yarating.",
+          ru: "ZYRON Medical — полнофункциональная система управления клиникой для эффективной медицинской практики. Ведите электронные медицинские карты, управляйте записью к врачам, выписывайте цифровые рецепты, выставляйте счета и формируйте клинические отчёты в защищённой платформе.",
+        },
+        modalFeatures: {
+          en: ["Electronic medical records (EMR)", "Doctor appointment scheduling", "Digital prescription issuing", "Patient history & diagnosis tracking", "Medical billing & invoicing", "Lab test result management", "Pharmacy integration", "Clinical analytics & reports"],
+          uz: ["Elektron tibbiy kartoteka (EMR)", "Shifokor qabulini rejalashtirish", "Raqamli retsept berish", "Bemor tarixi va tashxis kuzatuvi", "Tibbiy hisob-faktura va to'lovlar", "Laboratoriya natijalarini boshqarish", "Dorixona integratsiyasi", "Klinik analitika va hisobotlar"],
+          ru: ["Электронные медицинские карты (ЭМК)", "Расписание приёмов врачей", "Выдача цифровых рецептов", "История пациента и диагностика", "Медицинский биллинг и счета", "Управление результатами анализов", "Интеграция с аптекой", "Клиническая аналитика и отчёты"],
+        },
+      },
+      hotel: {
+        name: "ZYRON Hotel",
+        tagline: { en: "Hotel & Hospitality Management System", uz: "Mehmonxona boshqaruvi tizimi", ru: "Система управления гостиницей" },
+        desc: {
+          en: "Manage room bookings, guest check-in and check-out, housekeeping, and hotel revenue from a single system.",
+          uz: "Xona bronlari, mehmon check-in va check-out, xonalarni tozalash va mehmonxona daromadini bitta tizimdan boshqaring.",
+          ru: "Управляйте бронированием номеров, заселением и выселением гостей, хозяйственной службой и доходами отеля в единой системе.",
+        },
+        features: {
+          en: ["Room Booking & PMS", "Check-in / Check-out", "Revenue Management"],
+          uz: ["Xona broni va PMS", "Check-in / Check-out", "Daromad boshqaruvi"],
+          ru: ["Бронирование номеров и PMS", "Заезд / Выезд", "Управление доходами"],
+        },
+        fullDesc: {
+          en: "ZYRON Hotel is a modern property management system (PMS) designed for hotels, guesthouses, and resorts. Manage room availability, process reservations from multiple channels, handle guest check-in and check-out, coordinate housekeeping, and maximize revenue — all from a centralized dashboard.",
+          uz: "ZYRON Hotel — mehmonxonalar, kichik mehmonxonalar va kurortlar uchun yaratilgan zamonaviy mulk boshqaruvi tizimi (PMS). Xonalarning mavjudligini boshqaring, bir nechta kanaldan bronlarni qayta ishlang, mehmon check-in va check-outini boshqaring, xonalarni tozalashni muvofiqlashtiring va daromadni maksimallang.",
+          ru: "ZYRON Hotel — современная система управления объектом размещения (PMS) для отелей, гостевых домов и курортов. Управляйте доступностью номеров, обрабатывайте бронирования из разных каналов, оформляйте заезд и выезд, координируйте уборку и максимизируйте доход.",
+        },
+        modalFeatures: {
+          en: ["Room availability & reservation management", "Online booking channel integration", "Front desk check-in / check-out", "Housekeeping task management", "Guest profile & history", "Rate & revenue management", "Restaurant & room service billing", "Hotel analytics & occupancy reports"],
+          uz: ["Xonalar mavjudligi va bron boshqaruvi", "Online bron kanallari integratsiyasi", "Qabul stoli check-in / check-out", "Xona tozalash vazifalarini boshqarish", "Mehmon profili va tarixi", "Tarif va daromad boshqaruvi", "Restoran va xona xizmati hisob-fakturasi", "Mehmonxona analitikasi va band bo'lish hisobotlari"],
+          ru: ["Управление доступностью номеров и бронями", "Интеграция каналов онлайн-бронирования", "Заезд / выезд на ресепшене", "Управление задачами хозяйственной службы", "Профиль и история гостя", "Управление тарифами и доходами", "Счета за ресторан и обслуживание в номере", "Аналитика отеля и отчёты по заполняемости"],
+        },
+      },
+      farm: {
+        name: "ZYRON Farm",
+        tagline: { en: "Agribusiness Management Platform", uz: "Agro biznes boshqaruvi platformasi", ru: "Платформа управления агробизнесом" },
+        desc: {
+          en: "Manage crop yield tracking, land records, weather monitoring, and agricultural finances in one smart platform.",
+          uz: "Hosil hisobi, yer qaydlari, ob-havo kuzatuvi va qishloq xo'jaligi moliyasini bitta aqlli platformada boshqaring.",
+          ru: "Управляйте урожайностью, земельными записями, мониторингом погоды и сельхоз-финансами в единой умной платформе.",
+        },
+        features: {
+          en: ["Crop Yield Tracking", "Land Management", "Weather Monitoring"],
+          uz: ["Hosil hisobi", "Yer boshqaruvi", "Ob-havo kuzatuvi"],
+          ru: ["Учёт урожайности", "Управление земельными участками", "Мониторинг погоды"],
+        },
+        fullDesc: {
+          en: "ZYRON Farm brings modern technology to agriculture, helping farmers and agribusinesses manage every aspect of their operations. Track crop cycles and yields, manage land parcels, monitor weather conditions, plan irrigation and fertilization schedules, and keep full financial records — making data-driven farming a reality.",
+          uz: "ZYRON Farm zamonaviy texnologiyani qishloq xo'jaligiga olib keladi va fermerlar hamda agrobiznesga faoliyatlarining barcha jihatlarini boshqarishga yordam beradi. Ekinlar sikli va hosilini kuzating, yer uchastkalarini boshqaring, ob-havo sharoitlarini nazorat qiling, sug'orish va o'g'itlash jadvallarini rejalashtiring va to'liq moliyaviy yozuvlarni saqlang.",
+          ru: "ZYRON Farm привносит современные технологии в сельское хозяйство, помогая фермерам и агробизнесу управлять всеми аспектами деятельности. Отслеживайте циклы и урожайность культур, управляйте земельными участками, следите за погодой, планируйте орошение и удобрение, ведите финансовый учёт.",
+        },
+        modalFeatures: {
+          en: ["Crop cycle & yield tracking", "Land parcel management", "Real-time weather monitoring", "Irrigation & fertilization planning", "Farm equipment tracking", "Agricultural expense management", "Harvest forecasting with AI", "Farm performance analytics"],
+          uz: ["Ekin sikli va hosil kuzatuvi", "Yer uchastkalarini boshqarish", "Real vaqtda ob-havo kuzatuvi", "Sug'orish va o'g'itlash rejalashtirish", "Qishloq xo'jaligi texnikasini kuzatish", "Qishloq xo'jaligi xarajatlarini boshqarish", "AI yordamida hosil prognozi", "Ferma samaradorligi analitikasi"],
+          ru: ["Учёт циклов и урожайности культур", "Управление земельными участками", "Мониторинг погоды в реальном времени", "Планирование орошения и удобрений", "Отслеживание сельхозтехники", "Управление сельхоз-расходами", "Прогнозирование урожая с ИИ", "Аналитика эффективности фермы"],
+        },
+      },
+      fleet: {
+        name: "ZYRON Fleet",
+        tagline: { en: "Vehicle Fleet Management System", uz: "Avtomobil parki boshqaruvi tizimi", ru: "Система управления автопарком" },
+        desc: {
+          en: "Manage your taxi fleet, freight vehicles, and drivers with real-time GPS tracking and operational analytics.",
+          uz: "Taxi parki, yuk mashinalari va haydovchilarni real vaqtdagi GPS kuzatuvi va operatsion analitika bilan boshqaring.",
+          ru: "Управляйте таксопарком, грузовым транспортом и водителями с GPS-трекингом в реальном времени и операционной аналитикой.",
+        },
+        features: {
+          en: ["GPS Fleet Tracking", "Driver Management", "Fuel & Maintenance"],
+          uz: ["GPS parki kuzatuvi", "Haydovchilarni boshqarish", "Yoqilg'i va texnik xizmat"],
+          ru: ["GPS-трекинг автопарка", "Управление водителями", "Топливо и техобслуживание"],
+        },
+        fullDesc: {
+          en: "ZYRON Fleet gives transport companies, taxi operators, and logistics providers full control over their vehicle fleets. Track every vehicle live on GPS, manage driver assignments, monitor fuel consumption, schedule maintenance, and analyze fleet efficiency — reducing costs and maximizing uptime.",
+          uz: "ZYRON Fleet transport kompaniyalari, taxi operatorlari va logistika provayderlariga avtomobil parki ustidan to'liq nazoratni beradi. Har bir avtomobilni GPS orqali jonli kuzating, haydovchi tayinlashlarini boshqaring, yoqilg'i sarfini nazorat qiling, texnik xizmatni rejalashtiring va parki samaradorligini tahlil qiling.",
+          ru: "ZYRON Fleet даёт транспортным компаниям, операторам такси и логистическим провайдерам полный контроль над автопарком. Отслеживайте каждый автомобиль в реальном времени, управляйте назначениями водителей, контролируйте расход топлива, планируйте ТО и анализируйте эффективность парка.",
+        },
+        modalFeatures: {
+          en: ["Real-time GPS vehicle tracking", "Driver assignment & scheduling", "Fuel consumption monitoring", "Maintenance scheduling & alerts", "Trip history & route replay", "Driver behavior scoring", "Fleet cost & profitability reports", "Integration with dispatch systems"],
+          uz: ["Real vaqtda GPS avtomobil kuzatuvi", "Haydovchi tayinlash va jadvallash", "Yoqilg'i sarfini kuzatish", "Texnik xizmat rejalash va ogohlantirishlar", "Sayohat tarixi va marshrut takrori", "Haydovchi xulqi baholash", "Parki xarajatlari va rentabellik hisobotlari", "Dispetcher tizimlari bilan integratsiya"],
+          ru: ["GPS-трекинг транспортных средств в реальном времени", "Назначение водителей и составление расписания", "Мониторинг расхода топлива", "Планирование ТО и оповещения", "История поездок и воспроизведение маршрута", "Оценка поведения водителей", "Отчёты о затратах и рентабельности парка", "Интеграция с диспетчерскими системами"],
+        },
+      },
+      construction: {
+        name: "ZYRON Construction",
+        tagline: { en: "Construction Project Management Platform", uz: "Qurilish loyiha boshqaruvi platformasi", ru: "Платформа управления строительными проектами" },
+        desc: {
+          en: "Manage construction projects end-to-end — from estimates and materials to timelines and team coordination.",
+          uz: "Qurilish loyihalarini boshidan oxirigacha boshqaring — smetadan materiallar, muddat va jamoa muvofiqlashtiruvigacha.",
+          ru: "Управляйте строительными проектами от начала до конца — от смет и материалов до сроков и координации команды.",
+        },
+        features: {
+          en: ["Project Estimation", "Materials Management", "Timeline Tracking"],
+          uz: ["Loyiha smetasi", "Materiallarni boshqarish", "Muddat kuzatuvi"],
+          ru: ["Смета проекта", "Управление материалами", "Отслеживание сроков"],
+        },
+        fullDesc: {
+          en: "ZYRON Construction is a comprehensive platform for builders, contractors, and construction companies. Create detailed project estimates, manage material procurement and inventory, assign tasks to teams, track progress against timelines, and keep financial control — all in one powerful construction management system.",
+          uz: "ZYRON Construction quriluvchilar, pudratchilar va qurilish kompaniyalari uchun keng qamrovli platforma. Batafsil loyiha smetalarini tuzing, material xaridlari va omborini boshqaring, jamoalarga vazifalar tayinlang, muddat bo'yicha rivojlanishni kuzating va moliyaviy nazoratni saqlang.",
+          ru: "ZYRON Construction — комплексная платформа для застройщиков, подрядчиков и строительных компаний. Создавайте детальные сметы, управляйте закупками и запасами материалов, назначайте задачи командам, отслеживайте прогресс и контролируйте финансы.",
+        },
+        modalFeatures: {
+          en: ["Project estimation & budgeting", "Material procurement management", "Task & team assignment", "Timeline & milestone tracking", "Subcontractor management", "On-site progress photo reports", "Cost vs. budget analytics", "Client progress reporting"],
+          uz: ["Loyiha smetasi va byudjet", "Material xaridlarini boshqarish", "Vazifa va jamoa tayinlash", "Muddat va bosqichlarni kuzatish", "Subpudratchilarni boshqarish", "Qurilish joyi fotosuratli hisobotlar", "Xarajat va byudjet analitikasi", "Mijozga rivojlanish hisoboti"],
+          ru: ["Смета и бюджетирование проекта", "Управление закупками материалов", "Назначение задач и команд", "Отслеживание сроков и этапов", "Управление субподрядчиками", "Фотоотчёты о ходе строительства", "Аналитика затрат vs. бюджета", "Отчёты о прогрессе для клиента"],
+        },
+      },
+      tgbot: {
+        name: "ZYRON TG Bot",
+        tagline: { en: "Telegram Business Automation Platform", uz: "Telegram biznes avtomatizatsiya platformasi", ru: "Платформа автоматизации бизнеса в Telegram" },
+        desc: {
+          en: "Build powerful Telegram bots to automate customer service, orders, notifications, and business workflows.",
+          uz: "Mijozlarga xizmat ko'rsatish, buyurtmalar, bildirishnomalar va biznes jarayonlarini avtomatlashtirish uchun kuchli Telegram botlar yarating.",
+          ru: "Создавайте мощные Telegram-боты для автоматизации обслуживания клиентов, заказов, уведомлений и бизнес-процессов.",
+        },
+        features: {
+          en: ["No-code Bot Builder", "Order Automation", "CRM Integration"],
+          uz: ["Kodsiz bot yaratuvchi", "Buyurtmalarni avtomatlashtirish", "CRM integratsiyasi"],
+          ru: ["Конструктор без кода", "Автоматизация заказов", "Интеграция с CRM"],
+        },
+        fullDesc: {
+          en: "ZYRON TG Bot enables businesses to harness the power of Telegram's 900M+ user base for automation. Build feature-rich bots without writing a single line of code — automate customer support, receive orders, send notifications, collect data, and integrate with your existing business systems — all through Telegram.",
+          uz: "ZYRON TG Bot biznesga Telegramning 900M+ foydalanuvchi bazasini avtomatlashtirish uchun ishlatish imkonini beradi. Birorta ham kod yozmasdan boy funksiyali botlar yarating — mijozlarga avtomatik xizmat ko'rsating, buyurtmalar qabul qiling, bildirishnomalar yuboring, ma'lumot yig'ing va mavjud biznes tizimlari bilan integratsiya qiling.",
+          ru: "ZYRON TG Bot позволяет бизнесу использовать аудиторию Telegram (900M+ пользователей) для автоматизации. Создавайте многофункциональных ботов без единой строки кода — автоматизируйте поддержку, принимайте заказы, отправляйте уведомления, собирайте данные и интегрируйтесь с бизнес-системами.",
+        },
+        modalFeatures: {
+          en: ["Visual no-code bot builder", "Automated customer support flows", "Order receiving & processing", "Mass broadcast messaging", "Payment collection via bot", "CRM & database integration", "Bot analytics & user statistics", "Multi-language bot support"],
+          uz: ["Visual kodsiz bot yaratuvchi", "Avtomatik mijozlarga xizmat ko'rsatish oqimlari", "Buyurtma qabul qilish va qayta ishlash", "Ommaviy xabar tarqatish", "Bot orqali to'lov yig'ish", "CRM va ma'lumotlar bazasi integratsiyasi", "Bot analitikasi va foydalanuvchi statistikasi", "Ko'p tilli bot qo'llab-quvvatlash"],
+          ru: ["Визуальный конструктор без кода", "Автоматизированные потоки поддержки клиентов", "Приём и обработка заказов", "Массовые рассылки", "Приём платежей через бота", "Интеграция с CRM и базами данных", "Аналитика бота и статистика пользователей", "Многоязычная поддержка бота"],
+        },
+      },
+      miniapp: {
+        name: "ZYRON Mini App",
+        tagline: { en: "Telegram Mini App Builder", uz: "Telegram Mini App yaratuvchi platforma", ru: "Конструктор Telegram Mini App" },
+        desc: {
+          en: "Build fully featured Telegram Mini Apps for your online store, services, or bookings — without deep coding.",
+          uz: "Online do'kon, xizmatlar yoki bron uchun to'liq funksiyali Telegram Mini Applarni chuqur kodlashsiz yarating.",
+          ru: "Создавайте полнофункциональные Telegram Mini Apps для интернет-магазина, услуг или бронирования — без сложного кодирования.",
+        },
+        features: {
+          en: ["Drag & Drop Builder", "Telegram Payments", "Product Catalog"],
+          uz: ["Drag & Drop yaratuvchi", "Telegram to'lovlari", "Mahsulot katalogi"],
+          ru: ["Конструктор drag & drop", "Оплата через Telegram", "Каталог товаров"],
+        },
+        fullDesc: {
+          en: "ZYRON Mini App empowers businesses to launch a full-featured store or service platform directly inside Telegram, where their customers already are. Use our intuitive drag-and-drop builder to create product catalogs, service menus, booking flows, and checkout experiences — all powered by Telegram's native payment system.",
+          uz: "ZYRON Mini App biznesga to'liq funksiyali do'kon yoki xizmat platformasini mijozlari allaqachon bo'lgan Telegram ichida to'g'ridan-to'g'ri ishga tushirish imkonini beradi. Intuitiv drag-and-drop yaratuvchimizdan foydalanib mahsulot kataloglari, xizmat menyulari, bron oqimlari va to'lov tajribasini yarating.",
+          ru: "ZYRON Mini App позволяет бизнесу запустить полноценный магазин или сервис прямо внутри Telegram, где уже находятся клиенты. Используйте интуитивный drag-and-drop конструктор для создания каталогов, меню услуг, форм бронирования и оплаты через нативную платёжную систему Telegram.",
+        },
+        modalFeatures: {
+          en: ["Drag & drop Mini App builder", "Product & service catalog", "Telegram native payments", "Shopping cart & checkout", "Order management dashboard", "Customer notification system", "Analytics & conversion tracking", "Custom branding & design themes"],
+          uz: ["Drag & drop Mini App yaratuvchi", "Mahsulot va xizmatlar katalogi", "Telegram mahalliy to'lovlari", "Savat va to'lov jarayoni", "Buyurtma boshqaruvi paneli", "Mijozlarga bildirishnoma tizimi", "Analitika va konversiya kuzatuvi", "Maxsus brend va dizayn mavzulari"],
+          ru: ["Drag & drop конструктор Mini App", "Каталог товаров и услуг", "Нативные платежи Telegram", "Корзина и оформление заказа", "Панель управления заказами", "Система уведомлений клиентов", "Аналитика и отслеживание конверсий", "Кастомный брендинг и темы дизайна"],
+        },
+      },
+      mobileapp: {
+        name: "ZYRON Mobile App",
+        tagline: { en: "Mobile App Development Platform", uz: "Mobil ilova yaratish platformasi", ru: "Платформа разработки мобильных приложений" },
+        desc: {
+          en: "Launch your own branded iOS and Android mobile app without a full development team — fast and affordable.",
+          uz: "To'liq dasturlash jamoasisiz o'zingizning brendlangan iOS va Android mobil ilovangizni tez va arzon ishga tushiring.",
+          ru: "Запустите фирменное iOS и Android приложение без команды разработчиков — быстро и доступно.",
+        },
+        features: {
+          en: ["iOS & Android Apps", "No-code Builder", "Push Notifications"],
+          uz: ["iOS va Android ilovalar", "Kodsiz yaratuvchi", "Push bildirishnomalar"],
+          ru: ["iOS и Android приложения", "Конструктор без кода", "Push-уведомления"],
+        },
+        fullDesc: {
+          en: "ZYRON Mobile App lets any business launch a professional, fully branded mobile application on iOS and Android without the cost and complexity of traditional app development. Choose from pre-built templates, customize your app with your brand, integrate with your existing ZYRON products, and publish to app stores — all from a single platform.",
+          uz: "ZYRON Mobile App har qanday biznesga an'anaviy dastur ishlab chiqishning xarajati va murakkabligisiz iOS va Android da professional, to'liq brendlangan mobil ilova ishga tushirish imkonini beradi. Tayyor shablonlardan tanlang, ilovangizni brendingiz bilan sozlang, mavjud ZYRON mahsulotlari bilan integratsiya qiling va ilova do'konlariga joylashtiring.",
+          ru: "ZYRON Mobile App позволяет любому бизнесу запустить профессиональное брендированное мобильное приложение на iOS и Android без затрат и сложностей традиционной разработки. Выбирайте готовые шаблоны, настраивайте под свой бренд, интегрируйтесь с продуктами ZYRON и публикуйте в магазинах приложений.",
+        },
+        modalFeatures: {
+          en: ["iOS & Android app builder", "Pre-built industry templates", "Custom branding & UI theming", "Push notification campaigns", "In-app payments integration", "Offline mode support", "App Store & Google Play publishing", "App analytics & user behavior tracking"],
+          uz: ["iOS va Android ilova yaratuvchi", "Sohaviy tayyor shablonlar", "Maxsus brend va UI mavzulash", "Push bildirishnoma kampaniyalari", "Ilova ichida to'lov integratsiyasi", "Oflayn rejim qo'llab-quvvatlash", "App Store va Google Play joylashtirish", "Ilova analitikasi va foydalanuvchi xulqini kuzatish"],
+          ru: ["Конструктор iOS и Android приложений", "Готовые отраслевые шаблоны", "Кастомный брендинг и UI-темизация", "Кампании push-уведомлений", "Интеграция платежей внутри приложения", "Поддержка офлайн-режима", "Публикация в App Store и Google Play", "Аналитика приложения и отслеживание поведения"],
+        },
+      },
     },
   },
 
