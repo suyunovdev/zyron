@@ -12,6 +12,7 @@ import {
 import { useLanguage } from "@/lib/LanguageContext";
 import { translations, t } from "@/lib/translations";
 import ProductModal from "./ProductModal";
+import TiltCard from "./effects/TiltCard";
 
 const icons = [
   Monitor, UtensilsCrossed, ShoppingBag, Building2, Users, Brain, Cloud, BarChart3,
@@ -100,29 +101,30 @@ export default function Products() {
                 initial={{ opacity: 0, y: 30 }}
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ delay: 0.05 * i }}
-                className="group relative p-6 rounded-2xl bg-card border border-border hover:border-border-hover transition-all duration-300 hover:-translate-y-1 overflow-hidden"
               >
-                <div className={`absolute inset-0 bg-gradient-to-br ${colors[i]} opacity-0 group-hover:opacity-[0.03] transition-opacity duration-300 pointer-events-none`} />
-                <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${colors[i]} flex items-center justify-center mb-4 opacity-90`}>
-                  <Icon size={20} className="text-white" />
-                </div>
-                <h3 className="text-base font-semibold text-white mb-1">{item.name}</h3>
-                <p className="text-xs text-gray-500 mb-3">{t(item.tagline, locale)}</p>
-                <p className="text-sm text-gray-400 leading-relaxed mb-4">{t(item.desc, locale)}</p>
-                <div className="flex flex-wrap gap-2 mb-5">
-                  {feats.map((f: string) => (
-                    <span key={f} className="text-[11px] px-2.5 py-1 rounded-full bg-white/5 text-gray-400 border border-border">
-                      {f}
-                    </span>
-                  ))}
-                </div>
-                <button
-                  onClick={(e) => { e.stopPropagation(); setActiveModal(key); }}
-                  className="relative z-10 flex items-center gap-1.5 text-sm text-secondary hover:text-accent transition-colors group/btn"
-                >
-                  {t(tr.learnMore, locale)}
-                  <ArrowRight size={14} className="group-hover/btn:translate-x-1 transition-transform" />
-                </button>
+                <TiltCard className="group relative p-6 rounded-2xl bg-card border border-border hover:border-border-hover transition-all duration-300 overflow-hidden h-full">
+                  <div className={`absolute inset-0 bg-gradient-to-br ${colors[i]} opacity-0 group-hover:opacity-[0.03] transition-opacity duration-300 pointer-events-none`} />
+                  <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${colors[i]} flex items-center justify-center mb-4 opacity-90`}>
+                    <Icon size={20} className="text-white" />
+                  </div>
+                  <h3 className="text-base font-semibold text-white mb-1">{item.name}</h3>
+                  <p className="text-xs text-gray-500 mb-3">{t(item.tagline, locale)}</p>
+                  <p className="text-sm text-gray-400 leading-relaxed mb-4">{t(item.desc, locale)}</p>
+                  <div className="flex flex-wrap gap-2 mb-5">
+                    {feats.map((f: string) => (
+                      <span key={f} className="text-[11px] px-2.5 py-1 rounded-full bg-white/5 text-gray-400 border border-border">
+                        {f}
+                      </span>
+                    ))}
+                  </div>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); setActiveModal(key); }}
+                    className="relative z-10 flex items-center gap-1.5 text-sm text-secondary hover:text-accent transition-colors group/btn"
+                  >
+                    {t(tr.learnMore, locale)}
+                    <ArrowRight size={14} className="group-hover/btn:translate-x-1 transition-transform" />
+                  </button>
+                </TiltCard>
               </motion.div>
             );
           })}

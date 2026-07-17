@@ -5,6 +5,10 @@ import { ArrowRight, Play } from "lucide-react";
 import { useLanguage } from "@/lib/LanguageContext";
 import { translations, t } from "@/lib/translations";
 import { ZyronMark } from "./ZyronLogo";
+import ParticleBackground from "./effects/ParticleBackground";
+import Typewriter from "./effects/Typewriter";
+import Marquee from "./effects/Marquee";
+import MagneticButton from "./effects/MagneticButton";
 
 const partnerSlots = [
   { name: "TechCorp", logo: null },
@@ -22,6 +26,7 @@ export default function Hero() {
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       <div className="absolute inset-0 animated-gradient" />
       <div className="absolute inset-0 grid-pattern opacity-30" />
+      <ParticleBackground />
 
       {/* Glowing orbs */}
       <div className="absolute top-1/4 left-1/3 w-[600px] h-[600px] bg-secondary/8 rounded-full blur-[150px] animate-pulse" />
@@ -85,10 +90,26 @@ export default function Hero() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.2 }}
-          className="text-lg sm:text-xl text-gray-400 max-w-2xl mx-auto mb-10 leading-relaxed"
+          className="text-lg sm:text-xl text-gray-400 max-w-2xl mx-auto mb-4 leading-relaxed"
         >
           {t(tr.desc, locale)}
         </motion.p>
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.7, delay: 0.4 }}
+          className="text-xl sm:text-2xl font-medium font-[family-name:var(--font-display)] mb-10 h-9"
+        >
+          <span className="text-gray-500">→ </span>
+          <Typewriter
+            texts={["POS & Kassa", "ERP & CRM", "AI Yordamchi", "Cloud Xizmatlar", "Restoran Tizimi", "Telegram Bot", "Mobile App"]}
+            speed={70}
+            deleteSpeed={35}
+            pauseTime={1800}
+            className="gradient-text-blue"
+          />
+        </motion.div>
 
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -96,20 +117,24 @@ export default function Hero() {
           transition={{ duration: 0.7, delay: 0.3 }}
           className="flex flex-col sm:flex-row items-center justify-center gap-4"
         >
-          <a
-            href="#contact"
-            className="group flex items-center gap-2 bg-gradient-to-r from-secondary to-secondary/90 text-white font-semibold px-8 py-3.5 rounded-xl hover:shadow-lg hover:shadow-secondary/25 transition-all duration-300"
-          >
-            {t(tr.cta1, locale)}
-            <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
-          </a>
-          <a
-            href="#products"
-            className="group flex items-center gap-2 bg-white/5 border border-white/10 text-gray-300 font-medium px-8 py-3.5 rounded-xl hover:bg-white/10 hover:text-white hover:border-white/20 transition-all duration-300"
-          >
-            <Play size={16} />
-            {t(tr.cta2, locale)}
-          </a>
+          <MagneticButton strength={0.25}>
+            <a
+              href="#contact"
+              className="group flex items-center gap-2 bg-gradient-to-r from-secondary to-secondary/90 text-white font-semibold px-8 py-3.5 rounded-xl hover:shadow-lg hover:shadow-secondary/25 transition-all duration-300"
+            >
+              {t(tr.cta1, locale)}
+              <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+            </a>
+          </MagneticButton>
+          <MagneticButton strength={0.2}>
+            <a
+              href="#products"
+              className="group flex items-center gap-2 bg-white/5 border border-white/10 text-gray-300 font-medium px-8 py-3.5 rounded-xl hover:bg-white/10 hover:text-white hover:border-white/20 transition-all duration-300"
+            >
+              <Play size={16} />
+              {t(tr.cta2, locale)}
+            </a>
+          </MagneticButton>
           <a
             href="#contact"
             className="text-gray-400 hover:text-accent font-medium px-6 py-3.5 transition-colors"
@@ -128,19 +153,19 @@ export default function Hero() {
           <p className="text-xs text-gray-500 uppercase tracking-widest mb-6">
             {t(tr.trusted, locale)}
           </p>
-          <div className="flex items-center justify-center gap-8 sm:gap-12 opacity-40">
+          <Marquee speed={25} className="opacity-40">
             {partnerSlots.map((partner) => (
-              <div key={partner.name} className="flex items-center justify-center">
+              <div key={partner.name} className="flex items-center justify-center px-6 shrink-0">
                 {partner.logo ? (
                   <>{partner.logo}</>
                 ) : (
-                  <span className="text-sm sm:text-base font-semibold text-gray-500 tracking-wide">
+                  <span className="text-sm sm:text-base font-semibold text-gray-500 tracking-wide whitespace-nowrap">
                     {partner.name}
                   </span>
                 )}
               </div>
             ))}
-          </div>
+          </Marquee>
         </motion.div>
       </div>
     </section>
