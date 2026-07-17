@@ -28,7 +28,7 @@ export default function Contact() {
     return digits.length >= 9 && digits.length <= 15 && /^\d+$/.test(digits);
   }
 
-  function handleSubmit(e: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const form = e.currentTarget;
     const data = new FormData(form);
@@ -45,14 +45,29 @@ export default function Contact() {
     setPhoneError("");
 
     setSending(true);
-    // Simulate sending — replace with real API call
-    setTimeout(() => {
-      setSending(false);
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          firstName: data.get("firstName"),
+          lastName: data.get("lastName"),
+          email,
+          company: data.get("company"),
+          phone,
+          message,
+        }),
+      });
+      if (!res.ok) throw new Error("Failed");
       setSubmitted(true);
       form.reset();
       setPhoneError("");
       setTimeout(() => setSubmitted(false), 4000);
-    }, 1000);
+    } catch {
+      setSubmitted(false);
+    } finally {
+      setSending(false);
+    }
   }
 
   return (
