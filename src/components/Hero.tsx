@@ -30,35 +30,35 @@ export default function Hero() {
 
       {/* Floating elements */}
       <motion.div
-        animate={{ y: [-20, 20, -20], rotate: [0, 5, 0] }}
-        transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute top-32 left-[15%] w-16 h-16 rounded-2xl bg-secondary/5 border border-secondary/10 hidden lg:block"
-      />
-      <motion.div
-        animate={{ y: [15, -15, 15], rotate: [0, -5, 0] }}
-        transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute top-48 right-[20%] w-12 h-12 rounded-xl bg-accent/5 border border-accent/10 hidden lg:block"
-      />
-      <motion.div
-        animate={{ y: [-10, 25, -10] }}
-        transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute bottom-40 left-[25%] w-20 h-20 rounded-2xl bg-secondary/5 border border-secondary/10 hidden lg:block"
-      />
-      <motion.div
-        animate={{ y: [20, -20, 20] }}
+        animate={{ y: [-15, 15, -15] }}
         transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute bottom-32 right-[15%] w-14 h-14 rounded-full bg-accent/5 border border-accent/10 hidden lg:block"
+        className="absolute top-[30%] left-[10%] w-3 h-3 rounded-full bg-secondary/20 hidden lg:block"
+      />
+      <motion.div
+        animate={{ y: [10, -10, 10] }}
+        transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute top-[40%] right-[12%] w-2 h-2 rounded-full bg-accent/25 hidden lg:block"
+      />
+      <motion.div
+        animate={{ y: [-8, 12, -8] }}
+        transition={{ duration: 9, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute bottom-[35%] left-[20%] w-2.5 h-2.5 rounded-full bg-secondary/15 hidden lg:block"
+      />
+      <motion.div
+        animate={{ y: [12, -12, 12] }}
+        transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute bottom-[30%] right-[18%] w-2 h-2 rounded-full bg-accent/20 hidden lg:block"
       />
 
-      <div className="relative z-10 max-w-5xl mx-auto px-6 text-center">
+      <div className="relative z-10 max-w-5xl mx-auto px-6 pt-20 text-center">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-secondary/10 border border-secondary/20 mb-8"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-secondary/8 border border-secondary/15 mb-8"
         >
-          <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-          <span className="text-sm text-gray-300">{t(tr.badge, locale)}</span>
+          <div className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
+          <span className="text-xs text-gray-400">{t(tr.badge, locale)}</span>
         </motion.div>
 
         <motion.div
