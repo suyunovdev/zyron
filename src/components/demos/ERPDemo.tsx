@@ -90,7 +90,7 @@ export default function ERPDemo() {
   return (
     <div className="flex flex-col gap-3 min-h-[420px]">
       {/* KPI Cards */}
-      <div className="grid grid-cols-4 gap-2">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
         {kpiCards.map((kpi) => (
           <div key={kpi.label} className="p-2.5 rounded-lg bg-white/[0.03] border border-white/[0.06]">
             <div className="flex items-center justify-between mb-1.5">
@@ -128,9 +128,9 @@ export default function ERPDemo() {
 
       {tab === "dashboard" && (
         <>
-          <div className="grid grid-cols-5 gap-3 flex-1">
+          <div className="grid grid-cols-1 sm:grid-cols-5 gap-3 flex-1">
             {/* Revenue Chart */}
-            <div className="col-span-3 bg-white/[0.02] rounded-xl border border-white/[0.06] p-3">
+            <div className="col-span-full sm:col-span-3 bg-white/[0.02] rounded-xl border border-white/[0.06] p-3">
               <div className="flex items-center justify-between mb-3">
                 <p className="text-[11px] font-bold text-white">Oylik daromad</p>
                 <span className="text-[9px] text-gray-500">mln so'm</span>
@@ -154,7 +154,7 @@ export default function ERPDemo() {
             </div>
 
             {/* Department Budgets */}
-            <div className="col-span-2 bg-white/[0.02] rounded-xl border border-white/[0.06] p-3">
+            <div className="col-span-full sm:col-span-2 bg-white/[0.02] rounded-xl border border-white/[0.06] p-3">
               <p className="text-[11px] font-bold text-white mb-3">Byudjet sarfi</p>
               <div className="space-y-2.5 max-h-[160px] overflow-y-auto">
                 {departments.map((dept) => (
@@ -223,7 +223,7 @@ export default function ERPDemo() {
       {tab === "hr" && (
         <div className="flex-1 space-y-2">
           {/* HR Stats */}
-          <div className="grid grid-cols-4 gap-2">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
             {[
               { label: "Jami xodimlar", value: "156", color: "text-blue-400" },
               { label: "Ta'tilda", value: "8", color: "text-amber-400" },
@@ -239,7 +239,7 @@ export default function ERPDemo() {
 
           {/* Employee Table */}
           <div className="overflow-auto rounded-lg border border-white/[0.06] max-h-[240px]">
-            <table className="w-full text-[10px]">
+            <table className="w-full min-w-[500px] text-[10px]">
               <thead className="sticky top-0 bg-[#0a0f1a]">
                 <tr className="bg-white/[0.03] border-b border-white/[0.06]">
                   <th className="text-left py-2 px-2 text-gray-500 font-medium">Xodim</th>
@@ -283,7 +283,7 @@ export default function ERPDemo() {
           {/* Department Summary */}
           <div className="bg-white/[0.02] rounded-xl border border-white/[0.06] p-3">
             <p className="text-[11px] font-bold text-white mb-2">Bo'limlar tarkibi</p>
-            <div className="grid grid-cols-4 gap-1.5">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
               {departments.slice(0, 4).map((d) => (
                 <div key={d.name} className="p-2 rounded-lg bg-white/[0.03] border border-white/[0.06]">
                   <p className="text-[10px] text-white font-medium">{d.name}</p>
@@ -299,7 +299,7 @@ export default function ERPDemo() {
       {tab === "warehouse" && (
         <div className="flex-1 space-y-3">
           {/* Warehouse Stats */}
-          <div className="grid grid-cols-4 gap-2">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
             {[
               { label: "Jami pozitsiyalar", value: warehouseItems.length.toString(), color: "text-blue-400" },
               { label: "Kam qolgan", value: warehouseItems.filter((i) => i.qty <= i.minQty).length.toString(), color: "text-amber-400" },
@@ -314,7 +314,7 @@ export default function ERPDemo() {
           </div>
 
           <div className="overflow-auto rounded-lg border border-white/[0.06] max-h-[260px]">
-            <table className="w-full text-[10px]">
+            <table className="w-full min-w-[500px] text-[10px]">
               <thead className="sticky top-0 bg-[#0a0f1a]">
                 <tr className="bg-white/[0.03] border-b border-white/[0.06]">
                   <th className="text-left py-2 px-2 text-gray-500 font-medium">Nomi</th>

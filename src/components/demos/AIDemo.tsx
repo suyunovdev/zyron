@@ -166,7 +166,7 @@ export default function AIDemo() {
 
       {/* Suggestions */}
       {messages.length <= 2 && !isTyping && (
-        <div className="flex gap-1.5 px-3 pb-2 flex-wrap">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-1.5 px-3 pb-2">
           {suggestions.map((s) => (
             <button
               key={s.text}

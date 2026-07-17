@@ -159,9 +159,9 @@ export default function POSDemo() {
       </div>
 
       {tab === "sale" && (
-        <div className="grid grid-cols-5 gap-3 flex-1">
+        <div className="grid grid-cols-1 sm:grid-cols-5 gap-3 flex-1">
           {/* Left — Products */}
-          <div className="col-span-3 flex flex-col gap-2">
+          <div className="col-span-full sm:col-span-3 flex flex-col gap-2">
             <div className="relative">
               <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-500" />
               <input
@@ -188,7 +188,7 @@ export default function POSDemo() {
               ))}
             </div>
 
-            <div className="grid grid-cols-4 gap-1.5 overflow-y-auto flex-1 max-h-[400px] pr-1">
+            <div className="grid grid-cols-3 sm:grid-cols-4 gap-1.5 overflow-y-auto flex-1 max-h-[400px] pr-1">
               {filtered.map((p) => (
                 <button
                   key={p.id}
@@ -204,7 +204,7 @@ export default function POSDemo() {
           </div>
 
           {/* Right — Cart */}
-          <div className="col-span-2 flex flex-col bg-white/[0.02] rounded-xl border border-white/[0.06] p-2.5">
+          <div className="col-span-full sm:col-span-2 flex flex-col bg-white/[0.02] rounded-xl border border-white/[0.06] p-2.5">
             <div className="flex items-center justify-between mb-2">
               <p className="text-[11px] font-bold text-white flex items-center gap-1.5">
                 <ShoppingBag size={12} /> Savat
@@ -379,7 +379,7 @@ export default function POSDemo() {
                 <span className="text-[10px] text-emerald-400 font-medium">Faol</span>
               </div>
             </div>
-            <div className="grid grid-cols-4 gap-2">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
               {[
                 { label: "Jami savdo", value: fmt(1102000) },
                 { label: "Naqd", value: fmt(423000) },

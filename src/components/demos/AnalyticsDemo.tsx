@@ -101,7 +101,7 @@ export default function AnalyticsDemo() {
   return (
     <div className="flex flex-col gap-3 min-h-[420px]">
       {/* KPI Cards */}
-      <div className="grid grid-cols-4 gap-2">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
         {kpis.map((kpi) => (
           <div key={kpi.label} className="p-2.5 rounded-lg bg-white/[0.03] border border-white/[0.06] group hover:border-white/[0.12] transition-all">
             <div className="flex items-center justify-between mb-2">
@@ -139,9 +139,9 @@ export default function AnalyticsDemo() {
 
       {tab === "overview" && (
         <>
-          <div className="grid grid-cols-5 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-5 gap-3">
             {/* Main Chart */}
-            <div className="col-span-3 bg-white/[0.02] rounded-xl border border-white/[0.06] p-3">
+            <div className="sm:col-span-3 bg-white/[0.02] rounded-xl border border-white/[0.06] p-3">
               <div className="flex items-center justify-between mb-3">
                 <div className="flex gap-1">
                   {(["revenue", "orders", "visitors"] as const).map((m) => (
@@ -179,7 +179,7 @@ export default function AnalyticsDemo() {
             </div>
 
             {/* Traffic Channels */}
-            <div className="col-span-2 bg-white/[0.02] rounded-xl border border-white/[0.06] p-3">
+            <div className="sm:col-span-2 bg-white/[0.02] rounded-xl border border-white/[0.06] p-3">
               <p className="text-[11px] font-bold text-white mb-3">Trafik kanallari</p>
               <div className="flex justify-center mb-3">
                 <div className="relative w-[80px] h-[80px]">
@@ -218,8 +218,8 @@ export default function AnalyticsDemo() {
           </div>
 
           {/* Geo + Hourly */}
-          <div className="grid grid-cols-5 gap-3">
-            <div className="col-span-3 bg-white/[0.02] rounded-xl border border-white/[0.06] p-3">
+          <div className="grid grid-cols-1 sm:grid-cols-5 gap-3">
+            <div className="sm:col-span-3 bg-white/[0.02] rounded-xl border border-white/[0.06] p-3">
               <p className="text-[11px] font-bold text-white mb-2">Geografiya bo'yicha</p>
               <div className="space-y-1.5">
                 {geoData.map((g) => (
@@ -235,7 +235,7 @@ export default function AnalyticsDemo() {
               </div>
             </div>
 
-            <div className="col-span-2 bg-white/[0.02] rounded-xl border border-white/[0.06] p-3">
+            <div className="sm:col-span-2 bg-white/[0.02] rounded-xl border border-white/[0.06] p-3">
               <p className="text-[11px] font-bold text-white mb-2">Soatlik trafik</p>
               <div className="flex items-end gap-[2px] h-[60px]">
                 {hourlyTraffic.map((val, i) => (
@@ -264,7 +264,8 @@ export default function AnalyticsDemo() {
           {/* Sales Funnel */}
           <div className="bg-white/[0.02] rounded-xl border border-white/[0.06] p-4">
             <p className="text-[11px] font-bold text-white mb-4">Savdo voronkasi</p>
-            <div className="space-y-2">
+            <div className="overflow-x-auto">
+            <div className="space-y-2 min-w-[280px]">
               {funnelData.map((step, i) => {
                 const dropoff = i > 0 ? ((funnelData[i - 1].count - step.count) / funnelData[i - 1].count * 100).toFixed(0) : null;
                 return (
@@ -290,13 +291,14 @@ export default function AnalyticsDemo() {
                 );
               })}
             </div>
+            </div>
           </div>
 
           {/* Cohort Retention */}
           <div className="bg-white/[0.02] rounded-xl border border-white/[0.06] p-3">
             <p className="text-[11px] font-bold text-white mb-2">Kohort retention (%)</p>
             <div className="overflow-x-auto">
-              <table className="w-full text-[9px]">
+              <table className="w-full min-w-[340px] text-[9px]">
                 <thead>
                   <tr className="border-b border-white/[0.06]">
                     <th className="text-left py-1 text-gray-500 font-medium">Oy</th>
@@ -334,7 +336,7 @@ export default function AnalyticsDemo() {
       {tab === "realtime" && (
         <div className="flex-1 space-y-3">
           {/* Real-time KPIs */}
-          <div className="grid grid-cols-4 gap-2">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
             {realtimeData.map((rt) => (
               <div key={rt.metric} className="p-2.5 rounded-lg bg-white/[0.03] border border-white/[0.06]">
                 <rt.icon size={12} className={`${rt.color} mb-1`} />
@@ -411,7 +413,7 @@ export default function AnalyticsDemo() {
               </button>
             </div>
             <div className="overflow-auto max-h-[200px]">
-              <table className="w-full text-[10px]">
+              <table className="w-full min-w-[420px] text-[10px]">
                 <thead className="sticky top-0 bg-[#0a0f1a]">
                   <tr className="border-b border-white/[0.06]">
                     <th className="text-left py-1.5 text-gray-500 font-medium">#</th>

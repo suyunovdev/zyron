@@ -88,7 +88,7 @@ export default function CRMDemo() {
   return (
     <div className="flex flex-col gap-3 min-h-[420px]">
       {/* Top Stats */}
-      <div className="grid grid-cols-4 gap-2">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
         {[
           { label: "Jami deallar", value: deals.length, icon: Users, color: "text-blue-400" },
           { label: "Pipeline qiymati", value: pipelineValue + "M", icon: DollarSign, color: "text-amber-400" },
@@ -213,8 +213,8 @@ export default function CRMDemo() {
       )}
 
       {tab === "pipeline" && view === "list" && (
-        <div className="flex-1 overflow-auto rounded-lg border border-white/[0.06]">
-          <table className="w-full text-[10px]">
+        <div className="flex-1 overflow-x-auto rounded-lg border border-white/[0.06]">
+          <table className="w-full min-w-[420px] text-[10px]">
             <thead>
               <tr className="bg-white/[0.03] border-b border-white/[0.06]">
                 <th className="text-left py-2 px-2 text-gray-500 font-medium">Kontakt</th>
@@ -266,7 +266,7 @@ export default function CRMDemo() {
                   {stageConfig[deal.stage].label}
                 </span>
               </div>
-              <div className="grid grid-cols-3 gap-2 mt-2 text-[9px]">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mt-2 text-[9px]">
                 <div className="flex items-center gap-1 text-gray-400">
                   <Phone size={9} />
                   <span>{deal.phone}</span>
@@ -285,9 +285,9 @@ export default function CRMDemo() {
       )}
 
       {tab === "tasks" && (
-        <div className="flex-1 grid grid-cols-5 gap-3">
+        <div className="flex-1 grid grid-cols-1 sm:grid-cols-5 gap-3">
           {/* Task List */}
-          <div className="col-span-3 space-y-1.5 overflow-y-auto max-h-[280px]">
+          <div className="col-span-full sm:col-span-3 space-y-1.5 overflow-y-auto max-h-[280px]">
             {taskList.map((task) => (
               <div
                 key={task.id}
@@ -317,7 +317,7 @@ export default function CRMDemo() {
           </div>
 
           {/* Activity Log */}
-          <div className="col-span-2 bg-white/[0.02] rounded-xl border border-white/[0.06] p-3">
+          <div className="col-span-full sm:col-span-2 bg-white/[0.02] rounded-xl border border-white/[0.06] p-3">
             <p className="text-[11px] font-bold text-white mb-2">Bugungi faoliyat</p>
             <div className="space-y-2.5">
               {activityLog.map((act, i) => (
@@ -366,7 +366,7 @@ export default function CRMDemo() {
           </div>
 
           {/* Source Distribution */}
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="bg-white/[0.02] rounded-xl border border-white/[0.06] p-3">
               <p className="text-[11px] font-bold text-white mb-2">Lid manbalari</p>
               <div className="space-y-1.5">

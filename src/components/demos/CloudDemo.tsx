@@ -127,7 +127,7 @@ export default function CloudDemo() {
   return (
     <div className="flex flex-col gap-3 min-h-[420px]">
       {/* Top Stats */}
-      <div className="grid grid-cols-4 gap-2">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
         {[
           { label: "Serverlar", value: `${running}/${servers.length}`, icon: Server, color: "text-emerald-400" },
           { label: "Uptime", value: "99.98%", icon: Activity, color: "text-blue-400" },
@@ -163,8 +163,8 @@ export default function CloudDemo() {
       </div>
 
       {tab === "servers" && (
-        <div className="grid grid-cols-5 gap-3 flex-1">
-          <div className="col-span-3 space-y-1.5 overflow-y-auto max-h-[280px]">
+        <div className="grid grid-cols-1 sm:grid-cols-5 gap-3 flex-1">
+          <div className="sm:col-span-3 space-y-1.5 overflow-y-auto max-h-[280px]">
             {servers.map((s) => {
               const cfg = statusConfig[s.status];
               const cpu = getCpu(s);
@@ -198,7 +198,7 @@ export default function CloudDemo() {
             })}
           </div>
 
-          <div className="col-span-2 bg-white/[0.02] rounded-xl border border-white/[0.06] p-3">
+          <div className="sm:col-span-2 bg-white/[0.02] rounded-xl border border-white/[0.06] p-3">
             {selected ? (
               <div className="space-y-3">
                 <div className="flex items-center gap-2">
@@ -288,7 +288,7 @@ export default function CloudDemo() {
       {tab === "security" && (
         <div className="flex-1 space-y-3">
           {/* Security Stats */}
-          <div className="grid grid-cols-4 gap-2">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
             {[
               { label: "SSL Grade", value: "A+", icon: Lock, color: "text-emerald-400" },
               { label: "Firewall", value: "Faol", icon: Shield, color: "text-emerald-400" },
@@ -324,7 +324,7 @@ export default function CloudDemo() {
       {tab === "backup" && (
         <div className="flex-1 space-y-3">
           {/* Backup Stats */}
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
             {[
               { label: "Jami backuplar", value: "47", icon: Database },
               { label: "Umumiy hajm", value: "45.8 GB", icon: HardDrive },

@@ -115,7 +115,7 @@ export default function RetailDemo() {
   return (
     <div className="flex flex-col gap-3 min-h-[420px]">
       {/* Stats */}
-      <div className="grid grid-cols-5 gap-2">
+      <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
         {[
           { label: "Jami tovarlar", value: fmt(totalItems), color: "text-blue-400", icon: Package },
           { label: "Kam qolgan", value: lowStock, color: "text-amber-400", icon: AlertTriangle },
@@ -183,7 +183,7 @@ export default function RetailDemo() {
 
           {/* Table */}
           <div className="flex-1 overflow-auto rounded-lg border border-white/[0.06]">
-            <table className="w-full text-[10px]">
+            <table className="w-full min-w-[500px] text-[10px]">
               <thead>
                 <tr className="bg-white/[0.03] border-b border-white/[0.06]">
                   {[
@@ -258,7 +258,7 @@ export default function RetailDemo() {
             const p = inventory.find((x) => x.id === selectedProduct)!;
             const margin = ((p.price - p.cost) / p.price * 100).toFixed(1);
             return (
-              <div className="p-3 rounded-lg bg-white/[0.03] border border-emerald-500/20 grid grid-cols-4 gap-3">
+              <div className="p-3 rounded-lg bg-white/[0.03] border border-emerald-500/20 grid grid-cols-2 sm:grid-cols-4 gap-3">
                 <div>
                   <p className="text-[9px] text-gray-500">Shtrix-kod</p>
                   <p className="text-[10px] text-white font-mono">{p.barcode}</p>
@@ -299,7 +299,7 @@ export default function RetailDemo() {
                   {s.status === "active" ? "Faol" : "Nofaol"}
                 </span>
               </div>
-              <div className="grid grid-cols-4 gap-2 text-[9px]">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[9px]">
                 <div>
                   <p className="text-gray-500">Mahsulotlar</p>
                   <p className="text-white font-medium">{s.products} ta</p>
@@ -381,7 +381,7 @@ export default function RetailDemo() {
           </div>
 
           {/* Summary */}
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
             <div className="p-3 rounded-lg bg-white/[0.03] border border-white/[0.06] text-center">
               <p className="text-[9px] text-gray-500">Jami sotildi</p>
               <p className="text-sm font-bold text-white">{inventory.reduce((s, p) => s + p.sold, 0)} ta</p>

@@ -92,7 +92,7 @@ export default function RestaurantDemo() {
   return (
     <div className="flex flex-col gap-2.5 min-h-[520px]">
       {/* Stats Bar */}
-      <div className="grid grid-cols-5 gap-2">
+      <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
         {[
           { label: "Bo'sh stollar", value: stats.free, icon: Check, color: "text-emerald-400" },
           { label: "Band", value: stats.occupied, icon: Users, color: "text-blue-400" },
@@ -133,8 +133,8 @@ export default function RestaurantDemo() {
       </div>
 
       {tab === "tables" && (
-        <div className="grid grid-cols-5 gap-3 flex-1">
-          <div className="col-span-3 grid grid-cols-4 gap-1.5 content-start max-h-[380px] overflow-y-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-5 gap-3 flex-1">
+          <div className="col-span-full sm:col-span-3 grid grid-cols-3 sm:grid-cols-4 gap-1.5 content-start max-h-[380px] overflow-y-auto">
             {tables.map((table) => (
               <button
                 key={table.id}
@@ -155,7 +155,7 @@ export default function RestaurantDemo() {
             ))}
           </div>
 
-          <div className="col-span-2 bg-white/[0.02] rounded-xl border border-white/[0.06] p-3">
+          <div className="col-span-full sm:col-span-2 bg-white/[0.02] rounded-xl border border-white/[0.06] p-3">
             {selectedTable ? (
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
@@ -276,7 +276,7 @@ export default function RestaurantDemo() {
 
       {tab === "stats" && (
         <div className="flex-1 space-y-3">
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
             {[
               { label: "Bugungi tushum", value: fmt(stats.totalRevenue), sub: "+18% kechagiga nisbatan", color: "text-emerald-400" },
               { label: "Xizmat ko'rsatilgan", value: "47 ta", sub: "O'rtacha: 35 min", color: "text-blue-400" },
